@@ -11,6 +11,7 @@ import spacy
 from DataWrangle.wrangling import JobSkillsAnalyzer
 from groq import Groq
 import json
+from read_resume import read_resume_with_groq, extract_skills
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -98,24 +99,32 @@ class DBConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.conn.close()
 
-# Helper functions
-def parse_resume(file_path: str) -> List[str]:
-    """Extract skills from resume using NLP"""
-    skills = []
+# Update the parse_resume function
+async def parse_resume(file_path: str) -> List[str]:
+    """Extract skills from resume using Groq"""
     try:
+        # Read PDF content
         with open(file_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
             text = ""
             for page in pdf_reader.pages:
                 text += page.extract_text()
         
+        # Analyze resume with Groq
+        resume_analysis = read_resume_with_groq(text)
+        
+        # Extract skills from the analysis
+        if resume_analysis:
+            skills = extract_skills(resume_analysis)
+            return skills
+        
+        # Fallback to spaCy if Groq fails
         doc = nlp(text)
-        # Extract skills based on NER and pattern matching
-        # This is a simplified version - you might want to enhance this
-        skills = [ent.text for ent in doc.ents if ent.label_ in ["SKILL", "PRODUCT", "ORG"]]
+        return [ent.text for ent in doc.ents if ent.label_ in ["SKILL", "PRODUCT", "ORG"]]
+        
     except Exception as e:
         print(f"Error parsing resume: {str(e)}")
-    return skills
+        return []
 
 # API Endpoints
 @app.post("/users/", response_model=UserBase)
@@ -143,6 +152,7 @@ async def update_profile(
         
         # Handle resume upload if provided
         resume_path = None
+        resume_analysis = None
         if resume:
             file_path = f"uploads/{user_id}_{resume.filename}"
             os.makedirs("uploads", exist_ok=True)
@@ -151,8 +161,8 @@ async def update_profile(
                 buffer.write(content)
             resume_path = file_path
             
-            # Extract additional skills from resume
-            resume_skills = parse_resume(file_path)
+            # Extract additional skills from resume using Groq
+            resume_skills = await parse_resume(file_path)
             profile.skills.extend(resume_skills)
         
         # Update profile in database
@@ -162,14 +172,17 @@ async def update_profile(
             VALUES (?, ?, ?, ?, ?)
         """, (
             user_id,
-            ",".join(profile.skills),
+            ",".join(set(profile.skills)),  # Remove duplicates
             profile.location,
             resume_path,
             datetime.now()
         ))
         conn.commit()
         
-        return {"message": "Profile updated successfully"}
+        return {
+            "message": "Profile updated successfully",
+            "skills_extracted": len(resume_skills) if resume else 0
+        }
 
 async def analyze_with_groq(skills: List[str], job_data: dict) -> dict:
     """Use Groq to enhance job and skill analysis"""
@@ -194,12 +207,13 @@ async def analyze_with_groq(skills: List[str], job_data: dict) -> dict:
         completion = await groq_client.chat.completions.create(
             messages=[{
                 "role": "system",
-                "content": "You are a career advisor AI specializing in tech careers and skill development."
+                "content": """You are a career advisor AI specializing in tech careers and skill development and you want to give career advice 
+                to someone who knows that they want to do a job in tech but they don't know which field to go in tech for."""
             }, {
                 "role": "user",
                 "content": prompt
             }],
-            model="mixtral-8x7b-32768",  # or another appropriate model
+            model="mixtral-8x7b-32768",
             temperature=0.3,
             max_tokens=2000
         )
