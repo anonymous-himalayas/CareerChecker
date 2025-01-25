@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './CareerForm.css';
 
-const CareerForm = () => {
+const CareerForm = ({ onRecommendations }) => {
   const [formData, setFormData] = useState({
+    email: '',
     skills: '',
     location: '',
   });
@@ -37,9 +38,23 @@ const CareerForm = () => {
     setSuccess(false);
 
     try {
-      // Create form data for multipart/form-data
-      const formDataToSend = new FormData();
-      
+      // Create user first
+      const userResponse = await fetch('http://localhost:8000/users/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email })
+      });
+
+      if (!userResponse.ok) {
+        const errorData = await userResponse.json();
+        throw new Error(errorData.detail || 'Failed to create user');
+      }
+
+      const userData = await userResponse.json();
+      const userId = userData.id; // Get the actual user ID from response
+
       // Convert skills string to array and remove whitespace
       const skillsArray = formData.skills.split(',').map(skill => skill.trim());
       
@@ -49,29 +64,14 @@ const CareerForm = () => {
         location: formData.location
       };
 
-      // Append profile data and resume if exists
+      // Create FormData for profile update
+      const formDataToSend = new FormData();
       formDataToSend.append('profile', JSON.stringify(profileData));
       if (resume) {
         formDataToSend.append('resume', resume);
       }
 
-      // First create a user
-      const userResponse = await fetch('http://localhost:8000/users/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: 'user@example.com' }) // You might want to add email input
-      });
-
-      if (!userResponse.ok) {
-        throw new Error('Failed to create user');
-      }
-
-      const userData = await userResponse.json();
-      const userId = 1; // For testing, you might want to get this from the response
-
-      // Update profile with skills and resume
+      // Update profile
       const profileResponse = await fetch(`http://localhost:8000/profile/${userId}`, {
         method: 'POST',
         body: formDataToSend,
@@ -81,7 +81,7 @@ const CareerForm = () => {
         throw new Error('Failed to update profile');
       }
 
-      // Get career recommendations
+      // Get recommendations
       const recommendationsResponse = await fetch(`http://localhost:8000/recommendations/${userId}`);
       
       if (!recommendationsResponse.ok) {
@@ -90,8 +90,7 @@ const CareerForm = () => {
 
       const recommendations = await recommendationsResponse.json();
       setSuccess(true);
-      // Handle recommendations display (you might want to pass this to a parent component)
-      console.log(recommendations);
+      onRecommendations(recommendations);
 
     } catch (err) {
       setError(err.message);
@@ -104,6 +103,19 @@ const CareerForm = () => {
     <div className="career-form-container">
       <h1>Career Path Advisor</h1>
       <form onSubmit={handleSubmit} className="career-form">
+        <div className="form-group">
+          <label htmlFor="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="your.email@example.com"
+            required
+          />
+        </div>
+
         <div className="form-group">
           <label htmlFor="skills">Skills (comma-separated)</label>
           <textarea
