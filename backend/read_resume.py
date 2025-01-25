@@ -2,10 +2,10 @@ import os
 from groq import Groq
 import json
 from typing import Dict, List
+from dotenv import main
+main.load_dotenv()
 
-# Load the GROQ API key from the .env file
-from dotenv import load_dotenv
-load_dotenv()
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 def read_resume_with_groq(resume_text: str) -> Dict:
@@ -81,7 +81,7 @@ def extract_skills(resume_analysis: Dict) -> List[str]:
     
     return list(skills)
 
-# Example usage
-resume_text = "Your resume text here"
-groq_response = read_resume_with_groq(resume_text)
-print(groq_response)
+
+# resume_text = "Your resume text here"
+# groq_response = read_resume_with_groq(resume_text)
+# print(groq_response)

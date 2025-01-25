@@ -8,18 +8,21 @@ import os
 from datetime import datetime
 import PyPDF2
 import spacy
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from DataWrangle.wrangling import JobSkillsAnalyzer
 from groq import Groq
 import json
 from read_resume import read_resume_with_groq, extract_skills
+from dotenv import main
+main.load_dotenv()
+
 
 # Initialize FastAPI app
 app = FastAPI()
 
 # Initialize Groq client
-groq_client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")  # Store your API key in environment variables
-)
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # CORS middleware configuration
 app.add_middleware(
@@ -289,4 +292,4 @@ async def get_career_recommendations(user_id: int):
         return recommendation
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
