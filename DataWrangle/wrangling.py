@@ -1,169 +1,189 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report
-import os
+import re
+from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
 
-
-# def convert_to_csv(file_path, output_path):
-#     """Convert Excel file to CSV file"""
-#     # Load Excel file
-#     df = pd.read_excel(file_path)
+# GeoData
+def wrangle_geodata(df):
+    """Clean US geographical coordinates data"""
+    # Handle missing coordinates
+    df[['Latitude', 'Longitude']] = df[['Latitude', 'Longitude']].fillna(0)
     
-#     # Save as CSV
-#     df.to_csv(output_path, index=False)
+    # Convert FIPS code to standardized string format
+    df['FIPSCode'] = df['FIPSCode'].astype(str).str.zfill(5)
+    
+    # Clean ZipCode+4 format and deduplicate
+    df['ZipCodePlus4'] = df['ZipCodePlus4'].str.replace(r'\D', '', regex=True)
+    df = df.drop_duplicates(subset=['ZipCodePlus4'], keep='first')
+    
+    return df
 
-# convert_to_csv('Datasets/Career Dataset.xlsx', 'Datasets/data.csv')
-# convert_to_csv('Datasets/Job opportunities.xlsx', 'Datasets/job_data.csv')
+#Skills
+def wrangle_skill_data(df):
+    """Clean skills mapping data from data.csv"""
+    # Normalize skill names
+    skill_clean = df['Skill'].str.replace(
+        r'\b(ML|AI|Ml|A\.I)\b', 'Machine Learning', flags=re.I
+    )
+    df['Skill'] = skill_clean.str.replace(
+        r'\b(DL|Deep\s?L)\b', 'Deep Learning', flags=re.I
+    )
+    
+    # Convert comma-separated skills to lists
+    df['Skill'] = df['Skill'].str.split(r',\s*')
+    
+    # Filter invalid career entries
+    valid_careers = ['Data Science', 'Software Development', 'AI', 'Cybersecurity']
+    df = df[df['Career'].isin(valid_careers)]
+    
+    return df
 
+# Data Processing
+def wrangle_job_data(df):
+    """Clean job posting data from job_data.csv"""
+    # Convert salary ranges from GBP to USD (using approximate conversion rate of 1 GBP = 1.27 USD)
+    GBP_TO_USD = 1.27
+    
+    # Convert salary ranges to numeric values and convert to USD
+    df['Salary_Min'] = df['Salary Range'].str.extract(r'£(\d+),\d+').astype(float) * GBP_TO_USD
+    df['Salary_Max'] = df['Salary Range'].str.extract(r'£\d+,\d+ - £(\d+),\d+').astype(float) * GBP_TO_USD
+    df['Salary_Avg'] = (df['Salary_Min'] + df['Salary_Max']) / 2
+    
+    # Add currency indicator
+    df['Currency'] = 'USD'
+    
+    # Standardize experience levels
+    exp_map = {
+        'Entry-Level': 0,
+        'Junior': 1,
+        'Mid-Level': 2,
+        'Senior': 3
+    }
+    df['Experience_Level'] = df['Experience Level'].map(exp_map)
+    
+    # Convert date posted to datetime
+    df['Date Posted'] = pd.to_datetime(df['Date Posted'])
+    
+    return df
+
+#Transitions
+def wrangle_transitions(df):
+    """Clean career transitions data from Dashboard_transitions_dataset.csv"""
+    # Clean SOC codes
+    df['SOCCode'] = df['SOCCode'].astype(str)
+    df['TransitionSOCCode'] = df['TransitionSOCCode'].astype(str)
+    
+    # Calculate wage change metrics
+    df['WageChangePercent'] = (df['TransitionWageChange'] / 100)
+    
+    # Create transition direction flags
+    df['TransitionDirection'] = np.select(
+        [
+            df['TransitionWageDirection'] == 1,
+            df['TransitionWageDirection'] == 0,
+            df['TransitionWageDirection'] == -1
+        ],
+        ['Up', 'Lateral', 'Down'],
+        default='Unknown'
+    )
+    
+    return df
+
+#Trajectories
+def wrangle_trajectories(df):
+    """Clean career trajectory data from Trajectories-10-years-dataset.csv"""
+    # Convert demographic flags to integers
+    demo_cols = ['woman', 're_hispanic', 're_blackNH', 're_whiteNH', 're_otherNH']
+    df[demo_cols] = df[demo_cols].fillna(0).astype(int)
+    
+    # Calculate wage changes
+    df['wage_change'] = df['wage_119cap'] - df['wage_0cap']
+    df['wage_change_pct'] = (df['wage_change'] / df['wage_0cap']) * 100
+    
+    # Create education transition flags
+    df['education_improved'] = np.where(
+        (df['educBA_119'] > df['educBA_0']) |
+        (df['educAA_119'] > df['educAA_0']),
+        1, 0
+    )
+    
+    return df
+
+#CPS-SIPP
+def wrangle_cps_sipp(df):
+    """Clean CPS-SIPP employment survey data"""
+    # Convert wage columns to numeric
+    wage_cols = ['wage_SRCE', 'wage_DEST', 'medhrlywage_SRCE', 'medhrlywage_DEST']
+    df[wage_cols] = df[wage_cols].apply(pd.to_numeric, errors='coerce')
+    
+    # Handle demographic data
+    demo_cols = ['raceeth_whiteNH', 'raceeth_blackNH', 'raceeth_Hispanic']
+    df[demo_cols] = df[demo_cols].fillna(0).astype(int)
+    
+    # Create transition success metric
+    df['TransitionSuccess'] = np.where(
+        (df['wage_DEST'] > df['wage_SRCE']) & 
+        (df['jobzone_DEST'] >= df['jobzone_SRCE']), 1, 0
+    )
+    
+    return df
+
+# Main Model
 class JobSkillsAnalyzer:
     def __init__(self, data_folder):
-        """Initialize the analyzer with path to datasets folder"""
         self.data_folder = data_folder
-        self.model = None
-        self.mlb_skills = MultiLabelBinarizer()
-        self.mlb_interests = MultiLabelBinarizer()
-        self.le_location = LabelEncoder()
-        self.le_job = LabelEncoder()
+        self.skills_encoder = MultiLabelBinarizer()
+        self.job_encoder = LabelEncoder()
         
-    def load_and_preprocess_data(self):
-        """Load and preprocess multiple datasets from the folder"""
-        # Initialize empty lists to store combined data
-        all_skills = []
-        all_interests = []
-        all_locations = []
-        all_job_titles = []
+    def load_data(self):
+        """Load and clean all datasets"""
+        # Load skills data
+        skills_df = pd.read_csv(f'{self.data_folder}/data.csv')
+        self.skills_df = wrangle_skill_data(skills_df)
+        print(self.skills_df.head())
         
-        # Get all CSV files from the data folder
-        csv_files = [f for f in os.listdir(self.data_folder) if f.endswith('.csv')]
+        # Load job postings
+        jobs_df = pd.read_csv(f'{self.data_folder}/job_data.csv')
+        self.jobs_df = wrangle_job_data(jobs_df)
+        print(self.jobs_df.head())
         
-        for file in csv_files:
-            file_path = os.path.join(self.data_folder, file)
-            df = pd.read_csv(file_path)
-            
-            # Assuming datasets have 'skills', 'interests', 'location', and 'job_title' columns
-            # Convert string representations to lists if needed
-            skills = [eval(s) if isinstance(s, str) else s for s in df['skills']]
-            interests = [eval(i) if isinstance(i, str) else i for i in df['interests']]
-            
-            all_skills.extend(skills)
-            all_interests.extend(interests)
-            all_locations.extend(df['location'])
-            all_job_titles.extend(df['job_title'])
+        # Load career transitions
+        transitions_df = pd.read_csv(f'{self.data_folder}/Dashboard_transitions_dataset.csv')
+        self.transitions_df = wrangle_transitions(transitions_df)
+        print(self.transitions_df.head())
         
-        # Transform features
-        skills_encoded = self.mlb_skills.fit_transform(all_skills)
-        interests_encoded = self.mlb_interests.fit_transform(all_interests)
-        locations_encoded = self.le_location.fit_transform(all_locations)
+        # Load longitudinal data
+        trajectories_df = pd.read_csv(f'{self.data_folder}/Trajectories-10-years-dataset.csv')
+        self.trajectories_df = wrangle_trajectories(trajectories_df)
+        print(self.trajectories_df.head())
         
-        # Combine features
-        X = np.hstack([
-            skills_encoded,
-            interests_encoded,
-            locations_encoded.reshape(-1, 1)
-        ])
+        # Load employment survey data
+        employment_df = pd.read_csv(f'{self.data_folder}/CPS-SIPP_dataset.csv')
+        self.employment_df = wrangle_cps_sipp(employment_df)
+        print(self.employment_df.head())
         
-        # Encode job titles
-        y = self.le_job.fit_transform(all_job_titles)
-        
-        return X, y
+        return self
     
-    def train_model(self):
-        """Train the Random Forest model"""
-        X, y = self.load_and_preprocess_data()
-        
-        # Split the data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        
-        # Train model
-        self.model = RandomForestClassifier(n_estimators=100, random_state=42)
-        self.model.fit(X_train, y_train)
-        
-        # Evaluate model
-        y_pred = self.model.predict(X_test)
-        print(classification_report(y_test, y_pred))
-        
-        return self.model
+    def analyze_career_paths(self):
+        """Analyze career transition patterns and success rates"""
+        # Implement career path analysis using cleaned datasets
+        pass
     
-    def predict_job(self, skills_list, interests_list, location):
-        """Predict job based on input skills, interests, and location"""
-        if self.model is None:
-            raise ValueError("Model needs to be trained first!")
-            
-        # Transform input features
-        skills_encoded = self.mlb_skills.transform([skills_list])
-        interests_encoded = self.mlb_interests.transform([interests_list])
-        location_encoded = self.le_location.transform([location]).reshape(1, -1)
-        
-        # Combine features
-        X = np.hstack([skills_encoded, interests_encoded, location_encoded])
-        
-        # Make prediction
-        job_encoded = self.model.predict(X)
-        
-        # Return predicted job title
-        return self.le_job.inverse_transform(job_encoded)[0]
-
-    def get_technology_roadmap(self, predicted_job):
-        """Generate a technology roadmap based on the predicted job"""
-        # Define technology roadmaps for different job roles
-        roadmaps = {
-            'Web Developer': {
-                'Fundamentals': ['HTML', 'CSS', 'JavaScript'],
-                'Frontend': ['React.js', 'Vue.js', 'TypeScript'],
-                'Backend': ['Node.js', 'Express.js', 'MongoDB'],
-                'Additional': ['Git', 'REST APIs', 'Web Security']
-            },
-            'Data Analyst': {
-                'Fundamentals': ['Python', 'SQL', 'Statistics'],
-                'Data Processing': ['Pandas', 'NumPy', 'Excel'],
-                'Visualization': ['Tableau', 'Power BI', 'Matplotlib'],
-                'Additional': ['Machine Learning Basics', 'Data Cleaning', 'Big Data Tools']
-            },
-            'Software Developer': {
-                'Fundamentals': ['Python', 'Java', 'Data Structures'],
-                'Development': ['OOP', 'Design Patterns', 'APIs'],
-                'Tools': ['Git', 'Docker', 'CI/CD'],
-                'Additional': ['System Design', 'Testing', 'Agile Methodologies']
-            },
-            'Data Scientist': {
-                'Fundamentals': ['Python', 'SQL', 'Statistics'],
-                'Machine Learning': ['Scikit-learn', 'TensorFlow', 'PyTorch'],
-                'Data Visualization': ['Matplotlib', 'Seaborn', 'Plotly'],
-                'Additional': ['Data Wrangling', 'Big Data', 'Cloud Computing']
-            },
-            'Cybersecurity Engineer': {
-                'Fundamentals': ['Cybersecurity Basics', 'Network Security', 'Ethical Hacking'],
-                'Tools': ['Wireshark', 'Nmap', 'Kali Linux'],
-                'Additional': ['Penetration Testing', 'Security Audits', 'Compliance Standards']
-            }
-        }
-        
-        return roadmaps.get(predicted_job, "Roadmap not available for this job role")
+    def predict_next_job(self, current_job, skills):
+        """Predict potential next career move based on current job and skills"""
+        # Implement job prediction logic using cleaned datasets
+        pass
+    
+    def get_skill_recommendations(self, target_job):
+        """Get recommended skills for a target job"""
+        # Implement skill recommendation logic using cleaned datasets
+        pass
 
 def main():
-    # Example usage
-    analyzer = JobSkillsAnalyzer('Datasets')  # Point to the Datasets folder
-    analyzer.train_model()
+    """Main execution function"""
+    analyzer = JobSkillsAnalyzer("Datasets/")
+    analyzer.load_data()
+    # Add main processing logic here
     
-    # Example prediction
-    skills = ['python', 'machine learning', 'data analysis']
-    interests = ['data science', 'machine learning']
-    location = 'New York'
-    predicted_job = analyzer.predict_job(skills, interests, location)
-    print(f"Recommended job based on skills, interests, and location: {predicted_job}")
-
-    # Get technology roadmap
-    roadmap = analyzer.get_technology_roadmap(predicted_job)
-    print(f"Technology roadmap for {predicted_job}:")
-    for category, technologies in roadmap.items():
-        print(f"{category}:")
-        for technology in technologies:
-            print(f"  - {technology}")
-
 if __name__ == "__main__":
     main()
