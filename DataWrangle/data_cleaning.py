@@ -33,8 +33,8 @@ def wrangle_skill_data(df):
 def wrangle_job_data(df):
     """Clean job postings data"""
     # Convert salary ranges to numerical values
-    df[['Salary_Low', 'Salary_High']] = df['Salary Range'].str.extract(r'£([\d,]+)\s*-\s*£([\d,]+)')
-    df[['Salary_Low', 'Salary_High']] = df[['Salary_Low', 'Salary_High']].replace('[\£,]', '', regex=True).astype(float)
+    df[['Salary_Low', 'Salary_High']] = df['Salary Range'].str.extract(r'$([\d,]+)\s*-\s*£([\d,]+)')
+    df[['Salary_Low', 'Salary_High']] = df[['Salary_Low', 'Salary_High']].replace('[\$,]', '', regex=True).astype(float)
     
     # Standardize location format
     df['Location'] = df['Location'].str.title().str.replace(r'\s+', ' ', regex=True)

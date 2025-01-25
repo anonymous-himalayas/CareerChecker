@@ -38,6 +38,25 @@ def wrangle_skill_data(df):
     
     return df
 
+
+def change_salary_range_to_usd(df):
+        # Step 1: Split the range into two separate columns
+    df[['Lower Bound', 'Upper Bound']] = df['Salary Range'].str.replace(r'[$,]', '', regex=True).str.split(' - ', expand=True)
+
+    # Step 2: Convert the columns to numeric
+    df['Lower Bound'] = pd.to_numeric(df['Lower Bound'])
+    df['Upper Bound'] = pd.to_numeric(df['Upper Bound'])
+
+    # Step 3: Multiply the bounds by the factor
+    factor = 1.5
+    df['Lower Bound'] *= factor
+    df['Upper Bound'] *= factor
+
+    # Step 4: Optionally reformat back to the original format
+    df['Salary Range'] = df['Lower Bound'].astype(int).map('${:,.0f}'.format) + ' - ' + df['Upper Bound'].astype(int).map('${:,.0f}'.format)
+
+    return df
+
 # Data Processing
 def wrangle_job_data(df):
     """Clean job posting data from job_data.csv"""
@@ -45,12 +64,13 @@ def wrangle_job_data(df):
     GBP_TO_USD = 1.27
     
     # Convert salary ranges to numeric values and convert to USD
-    df['Salary_Min'] = df['Salary Range'].str.extract(r'£(\d+),\d+').astype(float) * GBP_TO_USD
-    df['Salary_Max'] = df['Salary Range'].str.extract(r'£\d+,\d+ - £(\d+),\d+').astype(float) * GBP_TO_USD
+    df['Salary Range'] = df['Salary Range'].str.replace(r'[£]', '$', regex=True)
+    df = change_salary_range_to_usd(df)
+    df['Salary_Min'] = df['Salary Range'].str.extract(r'£(\d+),\d+').astype(float) * GBP_TO_USD * 2
+    df['Salary_Max'] = df['Salary Range'].str.extract(r'£\d+,\d+ - £(\d+),\d+').astype(float) * GBP_TO_USD * 2
     df['Salary_Avg'] = (df['Salary_Min'] + df['Salary_Max']) / 2
     
-    # Add currency indicator
-    df['Currency'] = 'USD'
+    
     
     # Standardize experience levels
     exp_map = {
