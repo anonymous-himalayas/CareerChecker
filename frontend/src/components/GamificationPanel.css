@@ -1,0 +1,228 @@
+.gamification-panel {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.level-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.level-section h2 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.xp-progress {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.xp-text {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.badges-section {
+  margin-bottom: 2rem;
+}
+
+.badges-section h3 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.badge-item:hover {
+  transform: translateY(-2px);
+}
+
+.badge-icon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.badge-info h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.badge-info p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.quests-section h3 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.quests-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.quest-item {
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-color);
+  transition: transform 0.2s ease;
+}
+
+.quest-item:hover {
+  transform: translateY(-2px);
+}
+
+.quest-item.completed {
+  border-left-color: #10b981;
+  opacity: 0.8;
+}
+
+.quest-item.in_progress {
+  border-left-color: #f59e0b;
+}
+
+.quest-item.not_started {
+  border-left-color: #6b7280;
+}
+
+.quest-progress {
+  margin: 1rem 0;
+}
+
+.quest-progress-bar {
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.quest-progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.quest-item.completed .quest-progress-fill {
+  background-color: #10b981;
+}
+
+.quest-item.in_progress .quest-progress-fill {
+  background-color: #f59e0b;
+}
+
+.quest-progress-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.quest-header h4 {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.quest-item p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.xp-reward {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.quest-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-top: 0.75rem;
+}
+
+.quest-status.completed::before,
+.quest-status.in_progress::before,
+.quest-status.not_started::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.quest-status.completed {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.quest-status.completed::before {
+  background-color: #10b981;
+}
+
+.quest-status.in_progress {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.quest-status.in_progress::before {
+  background-color: #f59e0b;
+}
+
+.quest-status.not_started {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+} 
