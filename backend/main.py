@@ -69,6 +69,7 @@ init_db()
 # I think this is pydantic stuff
 class UserBase(BaseModel):
     email: str
+    id: Optional[int] = None
 
 class UserProfile(BaseModel):
     skills: List[str]
@@ -101,9 +102,9 @@ def get_career_advice_from_groq(skills: List[str], location: str) -> dict:
     Please provide career recommendations in tech. Include:
     1. Best matching job title
     2. Required skills for this role
-    3. A learning roadmap (2-month timeline)
+    3. A learning roadmap of skills to acquire in the immediate, short-term, and long-term (make sure it is in the span of 2 months)
     
-    Format the response STRICTLY as a JSON object with these keys:
+    Format the response STRICTLY as a JSON object with these keys and lists of strings as values:
     {{
         "job_title": "string",
         "confidence_score": float between 0 and 1,
@@ -120,7 +121,8 @@ def get_career_advice_from_groq(skills: List[str], location: str) -> dict:
         completion = groq_client.chat.completions.create(
             messages=[{
                 "role": "system",
-                "content": "You are a career advisor specializing in tech careers. Always return valid JSON."
+                "content": """You are a career advisor specializing in tech careers with 
+                multiple years of experience. Always return valid JSON."""
             }, {
                 "role": "user",
                 "content": prompt
@@ -146,9 +148,20 @@ async def create_user(user: UserBase):
                 (user.email, datetime.now())
             )
             conn.commit()
-            return user
+            
+            # Get the created user's ID
+            c.execute("SELECT id FROM users WHERE email = ?", (user.email,))
+            user_id = c.fetchone()['id']
+            
+            return {
+                "email": user.email,
+                "id": user_id
+            }
         except sqlite3.IntegrityError:
-            raise HTTPException(status_code=400, detail="Email already registered")
+            raise HTTPException(
+                status_code=400, 
+                detail="Email already registered"
+            )
 
 # User has been updated
 @app.post("/profile/{user_id}")
@@ -212,7 +225,9 @@ async def get_career_recommendations(user_id: int):
     try:
         with DBConnection() as conn:
             c = conn.cursor()
-            c.execute("SELECT skills, location FROM user_profiles WHERE user_id = ?", (user_id,))
+            c.execute("""SELECT skills, location 
+                      FROM user_profiles 
+                      WHERE user_id = ?""", (user_id,))
             profile = c.fetchone()
             
             if not profile:

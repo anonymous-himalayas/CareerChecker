@@ -25,7 +25,7 @@ def read_resume_with_groq(resume_text: str) -> Dict:
     4. Education background
     5. Project highlights
     
-    Format the response STRICTLY as a JSON object with these keys:
+    Format the response STRICTLY as a JSON object with these keys and lists of strings as values:
     {{
         "technical_skills": ["skill1", "skill2"],
         "soft_skills": ["skill1", "skill2"],
@@ -34,14 +34,15 @@ def read_resume_with_groq(resume_text: str) -> Dict:
         "projects": ["project1", "project2"]
     }}
     
-    Ensure all skills are individual strings, not descriptions.
+    Make sure all skills are individual strings and not descriptions.
     """
     
     try:
         completion = client.chat.completions.create(
             messages=[{
                 "role": "system",
-                "content": "You are an expert at analyzing resumes and extracting relevant skills and experiences. Always return valid JSON."
+                "content": """You are an expert at analyzing resumes and extracting relevant skills and experiences with many
+                  years of experience under your belt. Always return valid JSON."""
             }, {
                 "role": "user",
                 "content": prompt
@@ -87,7 +88,12 @@ def extract_skills(resume_analysis: Dict) -> List[str]:
                                  if word[0].isupper() or 
                                  any(tech in word.lower() for tech in [
                                      'python', 'java', 'sql', 'aws', 'azure', 'javascript',
-                                     'pandas', 'apis', 'react', 'node', 'docker', 'kubernetes'
+                                     'pandas', 'apis', 'react', 'node.js', 'express.js', 'docker', 'kubernetes',
+                                        'html', 'css', 'git', 'github', 'linux', 'unix', 'bash',
+                                        'api', 'rest', 'graphql', 'sqlalchemy', 'flask', 'django',
+                                        'fastapi', 'numpy', 'pandas', 'scipy', 'scikit-learn',
+                                        'tensorflow', 'keras', 'pytorch', 'opencv', 'nltk',
+                                        'R', 'Rust', 'C++', 'C#', 'Java', 'Scala', 'Go', 'Ruby'
                                  ])]
                 skills.update(technical_terms)
     
