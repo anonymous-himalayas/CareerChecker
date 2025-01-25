@@ -6,13 +6,13 @@ from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
 # GeoData
 def wrangle_geodata(df):
     """Clean US geographical coordinates data"""
-    # Handle missing coordinates
+    
     df[['Latitude', 'Longitude']] = df[['Latitude', 'Longitude']].fillna(0)
     
-    # Convert FIPS code to standardized string format
+    # Figure out fips
     df['FIPSCode'] = df['FIPSCode'].astype(str).str.zfill(5)
     
-    # Clean ZipCode+4 format and deduplicate
+    # 
     df['ZipCodePlus4'] = df['ZipCodePlus4'].str.replace(r'\D', '', regex=True)
     df = df.drop_duplicates(subset=['ZipCodePlus4'], keep='first')
     
@@ -21,18 +21,21 @@ def wrangle_geodata(df):
 #Skills
 def wrangle_skill_data(df):
     """Clean skills mapping data from data.csv"""
-    # Normalize skill names
+    
+    # make it ml
     skill_clean = df['Skill'].str.replace(
         r'\b(ML|AI|Ml|A\.I)\b', 'Machine Learning', flags=re.I
     )
+
+    # deep learning/neural netorks
     df['Skill'] = skill_clean.str.replace(
         r'\b(DL|Deep\s?L)\b', 'Deep Learning', flags=re.I
     )
     
-    # Convert comma-separated skills to lists
+    # SKill
     df['Skill'] = df['Skill'].str.split(r',\s*')
     
-    # Filter invalid career entries
+    # Data
     valid_careers = ['Data Science', 'Software Development', 'AI', 'Cybersecurity']
     df = df[df['Career'].isin(valid_careers)]
     
@@ -40,30 +43,25 @@ def wrangle_skill_data(df):
 
 
 def change_salary_range_to_usd(df):
-        # Step 1: Split the range into two separate columns
+    # pounds
     df[['Lower Bound', 'Upper Bound']] = df['Salary Range'].str.replace(r'[$,]', '', regex=True).str.split(' - ', expand=True)
-
-    # Step 2: Convert the columns to numeric
     df['Lower Bound'] = pd.to_numeric(df['Lower Bound'])
     df['Upper Bound'] = pd.to_numeric(df['Upper Bound'])
+    df['Lower Bound'] *= 1.5
+    df['Upper Bound'] *= 1.5
 
-    # Step 3: Multiply the bounds by the factor
-    factor = 1.5
-    df['Lower Bound'] *= factor
-    df['Upper Bound'] *= factor
-
-    # Step 4: Optionally reformat back to the original format
+    # Test
     df['Salary Range'] = df['Lower Bound'].astype(int).map('${:,.0f}'.format) + ' - ' + df['Upper Bound'].astype(int).map('${:,.0f}'.format)
 
     return df
 
 # Data Processing
 def wrangle_job_data(df):
-    """Clean job posting data from job_data.csv"""
-    # Convert salary ranges from GBP to USD (using approximate conversion rate of 1 GBP = 1.27 USD)
+    """job_data.csv"""
+    
     GBP_TO_USD = 1.27
     
-    # Convert salary ranges to numeric values and convert to USD
+    # british
     df['Salary Range'] = df['Salary Range'].str.replace(r'[£]', '$', regex=True)
     df = change_salary_range_to_usd(df)
     df['Salary_Min'] = df['Salary Range'].str.extract(r'£(\d+),\d+').astype(float) * GBP_TO_USD * 2
@@ -72,7 +70,7 @@ def wrangle_job_data(df):
     
     
     
-    # Standardize experience levels
+    # Change Exp level
     exp_map = {
         'Entry-Level': 0,
         'Junior': 1,
@@ -80,23 +78,19 @@ def wrangle_job_data(df):
         'Senior': 3
     }
     df['Experience_Level'] = df['Experience Level'].map(exp_map)
-    
-    # Convert date posted to datetime
     df['Date Posted'] = pd.to_datetime(df['Date Posted'])
     
     return df
 
 #Transitions
 def wrangle_transitions(df):
-    """Clean career transitions data from Dashboard_transitions_dataset.csv"""
-    # Clean SOC codes
+    """Dashboard_transitions_dataset.csv"""
+    # The Standard Occupational Classification (SOC) System is a United States government system for classifying occupations. 
+    # It is used by U.S. federal government agencies collecting occupational data, enabling comparison of occupations across data sets
     df['SOCCode'] = df['SOCCode'].astype(str)
     df['TransitionSOCCode'] = df['TransitionSOCCode'].astype(str)
-    
-    # Calculate wage change metrics
     df['WageChangePercent'] = (df['TransitionWageChange'] / 100)
     
-    # Create transition direction flags
     df['TransitionDirection'] = np.select(
         [
             df['TransitionWageDirection'] == 1,
@@ -111,16 +105,14 @@ def wrangle_transitions(df):
 
 #Trajectories
 def wrangle_trajectories(df):
-    """Clean career trajectory data from Trajectories-10-years-dataset.csv"""
-    # Convert demographic flags to integers
+    """Trajectories-10-years-dataset.csv"""
+
     demo_cols = ['woman', 're_hispanic', 're_blackNH', 're_whiteNH', 're_otherNH']
     df[demo_cols] = df[demo_cols].fillna(0).astype(int)
     
-    # Calculate wage changes
     df['wage_change'] = df['wage_119cap'] - df['wage_0cap']
     df['wage_change_pct'] = (df['wage_change'] / df['wage_0cap']) * 100
     
-    # Create education transition flags
     df['education_improved'] = np.where(
         (df['educBA_119'] > df['educBA_0']) |
         (df['educAA_119'] > df['educAA_0']),
@@ -131,16 +123,14 @@ def wrangle_trajectories(df):
 
 #CPS-SIPP
 def wrangle_cps_sipp(df):
-    """Clean CPS-SIPP employment survey data"""
-    # Convert wage columns to numeric
+    """cps-sipp_dataset.csv"""
+
     wage_cols = ['wage_SRCE', 'wage_DEST', 'medhrlywage_SRCE', 'medhrlywage_DEST']
     df[wage_cols] = df[wage_cols].apply(pd.to_numeric, errors='coerce')
-    
-    # Handle demographic data
+
     demo_cols = ['raceeth_whiteNH', 'raceeth_blackNH', 'raceeth_Hispanic']
     df[demo_cols] = df[demo_cols].fillna(0).astype(int)
     
-    # Create transition success metric
     df['TransitionSuccess'] = np.where(
         (df['wage_DEST'] > df['wage_SRCE']) & 
         (df['jobzone_DEST'] >= df['jobzone_SRCE']), 1, 0
@@ -156,28 +146,24 @@ class JobSkillsAnalyzer:
         self.job_encoder = LabelEncoder()
         
     def load_data(self):
-        """Load and clean all datasets"""
-        # Load skills data
+        """all datasets"""
+
         skills_df = pd.read_csv(f'{self.data_folder}/data.csv')
         self.skills_df = wrangle_skill_data(skills_df)
         # print(self.skills_df.head())
         
-        # Load job postings
         jobs_df = pd.read_csv(f'{self.data_folder}/job_data.csv')
         self.jobs_df = wrangle_job_data(jobs_df)
         # print(self.jobs_df.head())
         
-        # Load career transitions
         transitions_df = pd.read_csv(f'{self.data_folder}/Dashboard_transitions_dataset.csv')
         self.transitions_df = wrangle_transitions(transitions_df)
         # print(self.transitions_df.head())
         
-        # Load longitudinal data
         trajectories_df = pd.read_csv(f'{self.data_folder}/Trajectories-10-years-dataset.csv')
         self.trajectories_df = wrangle_trajectories(trajectories_df)
         # print(self.trajectories_df.head())
         
-        # Load employment survey data
         employment_df = pd.read_csv(f'{self.data_folder}/CPS-SIPP_dataset.csv')
         self.employment_df = wrangle_cps_sipp(employment_df)
         # print(self.employment_df.head())
@@ -186,7 +172,7 @@ class JobSkillsAnalyzer:
     
     def analyze_career_paths(self):
         """Analyze career transition patterns and success rates"""
-        # Calculate transition success metrics
+        
         transition_analysis = {
             'success_rate': self.transitions_df['TransitionWageDirection'].mean(),
             'avg_wage_change': self.transitions_df['TransitionWageChange'].mean(),
@@ -198,7 +184,7 @@ class JobSkillsAnalyzer:
             )
         }
         
-        # Analyze longitudinal outcomes
+        # means of changes
         trajectory_analysis = {
             'avg_10yr_wage_growth': self.trajectories_df['wage_change_pct'].mean(),
             'education_impact': (
@@ -213,18 +199,17 @@ class JobSkillsAnalyzer:
     
     def predict_next_job(self, current_job, skills):
         """Predict potential next career move based on current job and skills"""
-        # Find similar jobs based on skills overlap
+
+        # set or list
         current_skills = set(skills)
         
-        # Convert jobs dataframe skills to sets for comparison
         self.jobs_df['skills_set'] = self.jobs_df['Required Skills'].str.split(',').apply(set)
-        
-        # Calculate skill similarity scores
+
+        # lambda now works
         self.jobs_df['skill_match'] = self.jobs_df['skills_set'].apply(
             lambda x: len(current_skills.intersection(x)) / len(current_skills.union(x))
         )
         
-        # Find transitions from similar current jobs
         similar_transitions = self.transitions_df[
             self.transitions_df['SOCTitle'].str.contains(current_job, case=False)
         ]
@@ -248,26 +233,24 @@ class JobSkillsAnalyzer:
     
     def get_skill_recommendations(self, target_job):
         """Get recommended skills for a target job"""
-        # Find target job requirements
+
         target_jobs = self.jobs_df[
             self.jobs_df['Job Title'].str.contains(target_job, case=False)
         ]
         
         if target_jobs.empty:
             return {'error': 'Target job not found'}
-            
-        # Get common required skills for target job
+        
+        # set or list
         target_skills = set()
         for skills in target_jobs['Required Skills'].str.split(','):
             target_skills.update(skills)
         
-        # Find skills from successful transitions into this role
         successful_transitions = self.transitions_df[
             (self.transitions_df['TransitionSOCTitle'].str.contains(target_job, case=False)) &
             (self.transitions_df['TransitionWageDirection'] == 1)
         ]
         
-        # Get skills from similar roles in skills dataset
         similar_roles = self.skills_df[
             self.skills_df['Career'].str.contains(target_job, case=False)
         ]
@@ -276,12 +259,10 @@ class JobSkillsAnalyzer:
         for skills in similar_roles['Skill']:
             role_skills.update(skills)
             
-        # Combine and rank skills
+        # Combine
         all_skills = target_skills.union(role_skills)
         
-        # Calculate skill importance scores based on:
-        # 1. Frequency in job postings
-        # 2. Association with higher salaries
+        # Everytyhing
         skill_scores = {}
         for skill in all_skills:
             jobs_with_skill = self.jobs_df[
@@ -293,7 +274,6 @@ class JobSkillsAnalyzer:
                 'in_target_requirements': skill in target_skills
             }
         
-        # Sort skills by importance
         ranked_skills = sorted(
             skill_scores.items(),
             key=lambda x: (
@@ -312,53 +292,37 @@ class JobSkillsAnalyzer:
 
 def main():
     """Main execution function"""
-    # Initialize analyzer with data folder path
+
     analyzer = JobSkillsAnalyzer("Datasets/")
     print("Loading and cleaning datasets...")
     analyzer.load_data()
     
     # Test career path analysis
-    print("\n1. Analyzing career transition patterns...")
-    career_analysis = analyzer.analyze_career_paths()
-    print(f"Overall transition success rate: {career_analysis['transitions']['success_rate']:.2%}")
-    print(f"Average wage change: {career_analysis['transitions']['avg_wage_change']:.2f}%")
-    print("\nTop 3 most common career transitions:")
-    print(career_analysis['transitions']['common_paths'].head(3))
+    # print("\n1. Analyzing career transition patterns...")
+    # career_analysis = analyzer.analyze_career_paths()
+    # print(f"Overall transition success rate: {career_analysis['transitions']['success_rate']:.2%}")
+    # print(f"Average wage change: {career_analysis['transitions']['avg_wage_change']:.2f}%")
+    # print("\nTop 3 most common career transitions:")
+    # print(career_analysis['transitions']['common_paths'].head(3))
     
-    # Test job prediction
-    print("\n2. Testing job prediction...")
-    current_job = "Software Engineer"
-    current_skills = ["Python", "Java", "SQL", "Machine Learning"]
-    predictions = analyzer.predict_next_job(current_job, current_skills)
-    print(f"\nTop recommended next roles for {current_job}:")
-    print(predictions['recommended_jobs'])
-    print(f"Expected average wage increase: {predictions['avg_wage_increase']:.2f}%")
+    # # Test job prediction
+    # print("\n2. Testing job prediction...")
+    # current_job = "Software Engineer"
+    # current_skills = ["Python", "Java", "SQL", "Machine Learning"]
+    # predictions = analyzer.predict_next_job(current_job, current_skills)
+    # print(f"\nTop recommended next roles for {current_job}:")
+    # print(predictions['recommended_jobs'])
+    # print(f"Expected average wage increase: {predictions['avg_wage_increase']:.2f}%")
     
-    # Test skill recommendations
-    print("\n3. Testing skill recommendations...")
-    target_job = "Data Scientist"
-    skill_recs = analyzer.get_skill_recommendations(target_job)
-    print(f"\nEssential skills for {target_job}:")
-    print(skill_recs['essential_skills'])
-    print(f"\nRecommended additional skills:")
-    print(skill_recs['recommended_skills'])
+    # # Test skill recommendations
+    # print("\n3. Testing skill recommendations...")
+    # target_job = "Data Scientist"
+    # skill_recs = analyzer.get_skill_recommendations(target_job)
+    # print(f"\nEssential skills for {target_job}:")
+    # print(skill_recs['essential_skills'])
+    # print(f"\nRecommended additional skills:")
+    # print(skill_recs['recommended_skills'])
     
-    # Test with different job types
-    # print("\n4. Testing with different job types...")
-    # test_jobs = [
-    #     ("Data Analyst", ["SQL", "Excel", "Python"]),
-    #     ("Network Engineer", ["Cisco", "Networking", "Security"]),
-    #     ("Project Manager", ["Agile", "Scrum", "Leadership"])
-    # ]
-    
-    # for job, skills in test_jobs:
-    #     print(f"\nAnalyzing career path for {job}...")
-    #     predictions = analyzer.predict_next_job(job, skills)
-    #     print(f"Top next role recommendation: {predictions['recommended_jobs'].iloc[0]['Job Title']}")
-        
-    #     skill_recs = analyzer.get_skill_recommendations(job)
-    #     print(f"Top 3 recommended skills:")
-    #     print(skill_recs['essential_skills'][:3])
 
 if __name__ == "__main__":
     main()

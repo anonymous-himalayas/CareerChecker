@@ -135,7 +135,7 @@ def get_career_advice_from_groq(skills: List[str], location: str) -> dict:
         print(f"Groq API error: {str(e)}")
         return None
 
-# API Endpoints
+# User has been created
 @app.post("/users/", response_model=UserBase)
 async def create_user(user: UserBase):
     with DBConnection() as conn:
@@ -150,6 +150,7 @@ async def create_user(user: UserBase):
         except sqlite3.IntegrityError:
             raise HTTPException(status_code=400, detail="Email already registered")
 
+# User has been updated
 @app.post("/profile/{user_id}")
 async def update_profile(
     user_id: int,
@@ -172,7 +173,7 @@ async def update_profile(
                     buffer.write(content)
                 resume_path = file_path
                 
-                # Extract skills from resume
+                # WORK YOU STUPID THING
                 with open(file_path, 'rb') as file:
                     pdf_reader = PyPDF2.PdfReader(file)
                     text = ""
@@ -184,7 +185,7 @@ async def update_profile(
                     resume_skills = extract_skills(resume_analysis)
                     profile_data.skills.extend(resume_skills)
             
-            # Update profile in database
+            # profile_data.skills = list(set(profile_data.skills))
             c.execute("""
                 INSERT OR REPLACE INTO user_profiles 
                 (user_id, skills, location, resume_path, last_updated)
@@ -205,6 +206,7 @@ async def update_profile(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+# Recommendations from model and groqq
 @app.get("/recommendations/{user_id}", response_model=CareerRecommendation)
 async def get_career_recommendations(user_id: int):
     try:
@@ -218,7 +220,6 @@ async def get_career_recommendations(user_id: int):
             
             skills = profile['skills'].split(',')
             
-            # Get recommendations from Groq (now synchronous)
             recommendations = get_career_advice_from_groq(skills, profile['location'])
             
             if not recommendations:
@@ -227,7 +228,7 @@ async def get_career_recommendations(user_id: int):
                     detail="Could not generate recommendations"
                 )
             
-            # Store recommendation
+            # Do I really need to add it to the db
             c.execute("""
                 INSERT INTO career_recommendations 
                 (user_id, recommended_job, confidence_score, created_at)
@@ -242,11 +243,13 @@ async def get_career_recommendations(user_id: int):
             
             return CareerRecommendation(**recommendations)
             
+    # pls work
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Error generating recommendations: {str(e)}"
         )
 
+# unicorn
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

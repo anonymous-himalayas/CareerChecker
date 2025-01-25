@@ -51,7 +51,7 @@ def read_resume_with_groq(resume_text: str) -> Dict:
             max_tokens=2000
         )
         
-        # Ensure we're getting valid JSON
+        # JSON
         response_text = completion.choices[0].message.content.strip()
         try:
             return json.loads(response_text)
@@ -64,25 +64,25 @@ def read_resume_with_groq(resume_text: str) -> Dict:
         return None
 
 def extract_skills(resume_analysis: Dict) -> List[str]:
-    """Extract all skills from the resume analysis"""
+    """Skills"""
     if not resume_analysis:
         return []
     
     skills = set()
     
-    # Add technical skills
+    # Technical
     if 'technical_skills' in resume_analysis:
         skills.update(skill.strip() for skill in resume_analysis['technical_skills'])
     
-    # Add relevant soft skills
+    # Soft
     if 'soft_skills' in resume_analysis:
         skills.update(skill.strip() for skill in resume_analysis['soft_skills'])
     
-    # Extract skills mentioned in projects
+    # Project
     if 'projects' in resume_analysis:
         for project in resume_analysis['projects']:
             if isinstance(project, str):
-                # Extract any technical terms that might be skills
+                # Issue
                 technical_terms = [word.strip() for word in project.split() 
                                  if word[0].isupper() or 
                                  any(tech in word.lower() for tech in [
@@ -91,7 +91,6 @@ def extract_skills(resume_analysis: Dict) -> List[str]:
                                  ])]
                 skills.update(technical_terms)
     
-    # Remove any empty strings
     skills.discard('')
     
     return list(skills)
