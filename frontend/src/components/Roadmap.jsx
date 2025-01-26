@@ -484,6 +484,43 @@ const Roadmap = ({ recommendations }) => {
         }
       ]
     },
+    "Low-Level System Programmer": {
+      "courses": [
+        {
+          title: "Operating Systems: Three Easy Pieces",
+          platform: "Book",
+          link: "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+          price: "Free",
+          rating: 4.8,
+          skill: "Operating Systems",
+          difficulty: "Advanced"
+        },
+        {
+          title: "Computer Systems: A Programmer's Perspective",
+          platform: "Book",
+          link: "http://csapp.cs.cmu.edu/",
+          price: "$70",
+          rating: 4.7,
+          skill: "Computer Systems",
+          difficulty: "Advanced"
+        }
+      ], "additional_resources": [
+        {
+          title: "Linux Kernel Archives",
+          type: "Documentation",
+          link: "https://www.kernel.org/doc/html/latest/",
+          description: "Official Linux kernel documentation",
+          format: "Text"
+        },
+        {
+          title: "OSDev Wiki",
+          type: "Wiki",
+          link: "https://wiki.osdev.org",
+          description: "Wiki for OS developers and low-level programming",
+          format: "Text"
+        }
+      ]
+    },
     "Machine Learning Engineer": {
       "courses": [
         {
@@ -585,6 +622,24 @@ const Roadmap = ({ recommendations }) => {
         salary: "$120,000 - $150,000",
         link: "https://www.linkedin.com/jobs/",
         skills: ["Node.js", "React", "MongoDB"]
+      }
+    ],
+    "Low-Level System Programmer": [
+      {
+        company: "TechCorp",
+        title: "Systems Programmer",
+        location: "San Francisco, CA",
+        salary: "$140,000 - $180,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["C", "Assembly", "Linux Kernel"]
+      },
+      {
+        company: "Systems Inc",
+        title: "Embedded Systems Engineer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["RTOS", "ARM", "Device Drivers"]
       }
     ],
     "Frontend Developer": [
