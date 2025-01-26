@@ -438,6 +438,52 @@ const Roadmap = ({ recommendations }) => {
         }
       ]
     },
+    "Full Stack Developer": {
+      "courses": [
+        {
+          title: "The Web Developer Bootcamp 2021",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/the-web-developer-bootcamp/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Web Development",
+          difficulty: "Beginner"
+        },
+        {
+          title: "React - The Complete Guide (incl Hooks, React Router, Redux)",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "React",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "Node.js - The Complete Guide",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/nodejs-the-complete-guide/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Node.js",
+          difficulty: "Intermediate"
+        }
+      ], "additional_resources": [
+        {
+          title: "freeCodeCamp",
+          type: "Online Learning Platform",
+          link: "https://www.freecodecamp.org",
+          description: "Learn to code and build projects for nonprofits",
+          format: "Interactive"
+        },
+        {
+          title: "MDN Web Docs",
+          type: "Documentation",
+          link: "https://developer.mozilla.org",
+          description: "Comprehensive web development documentation",
+          format: "Text"
+        }
+      ]
+    },
     "Machine Learning Engineer": {
       "courses": [
         {
@@ -575,6 +621,24 @@ const Roadmap = ({ recommendations }) => {
         salary: "$130,000 - $160,000",
         link: "https://www.linkedin.com/jobs/",
         skills: ["Kafka", "Hive", "AWS"]
+      }
+    ],
+    "Full Stack Developer": [
+      {
+        company: "WebTech",
+        title: "Frontend Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "JavaScript", "HTML/CSS"]
+      },
+      {
+        company: "Digital Solutions",
+        title: "Full Stack Developer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Node.js", "React", "MongoDB"]
       }
     ],
     "Software Engineer": [
