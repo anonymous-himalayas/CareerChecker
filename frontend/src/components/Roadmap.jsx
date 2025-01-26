@@ -679,24 +679,6 @@ const Roadmap = ({ recommendations }) => {
         skills: ["RTOS", "ARM", "Device Drivers"]
       }
     ],
-    "Frontend Developer": [
-      {
-        company: "WebTech",
-        title: "Frontend Developer",
-        location: "Austin, TX",
-        salary: "$100,000 - $130,000",
-        link: "https://www.linkedin.com/jobs/",
-        skills: ["React", "JavaScript", "HTML/CSS"]
-      },
-      {
-        company: "Digital Solutions",
-        title: "Full Stack Developer",
-        location: "Remote",
-        salary: "$120,000 - $150,000",
-        link: "https://www.linkedin.com/jobs/",
-        skills: ["Node.js", "React", "MongoDB"]
-      }
-    ],
     "Low Level Systems Engineer" : [
       {
         company: "TechCorp",
