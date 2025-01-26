@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import CareerForm from './components/CareerForm';
 import Roadmap from './components/Roadmap';
@@ -14,11 +14,11 @@ function App() {
   };
 
   return (
-    <Router>
+    <Router basename="/CareerChecker">
       <Routes>
-        <Route path="./" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route 
-          path="./career-form" 
+          path="/career-form" 
           element={
             <CareerForm 
               onRecommendations={handleRecommendations}
@@ -26,7 +26,7 @@ function App() {
           } 
         />
         <Route 
-          path="./roadmap" 
+          path="/roadmap" 
           element={
             <Roadmap 
               recommendations={recommendations}
@@ -35,9 +35,10 @@ function App() {
           } 
         />
         <Route 
-          path="./gamification" 
+          path="/gamification" 
           element={<GamificationPanel />}
         />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
