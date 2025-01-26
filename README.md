@@ -1,7 +1,5 @@
 # Career Compass
-- Let Career Compass guide your skills and unlock your path to success!
-
-- Update: the deployment just crashed and I have no clue how to fix it 😭 but I had it running
+Let Career Compass guide your skills and unlock your path to success!
 
 # Submission for IrvineHacks 2025
 
@@ -11,7 +9,6 @@ Career Compass is a personalized career guidance platform that leverages machine
 <p align="center">
   <a href="https://skillicons.dev">
     <img src="https://skillicons.dev/icons?i=javascript,react,python,sqlite,fastapi" />
-    <img src="https://skillicons.dev/icons?i=sqlite">
     <img src="https://skillicons.dev/icons?i=vite">
     <img src="https://skillicons.dev/icons?i=sklearn">
   </a>
