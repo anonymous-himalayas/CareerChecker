@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -11,9 +11,18 @@ from groq import Groq
 import json
 from read_resume import read_resume_with_groq, extract_skills
 from dotenv import main
+import logging
+
 
 
 main.load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 
 app = FastAPI()
@@ -264,6 +273,358 @@ async def get_career_recommendations(user_id: int):
             status_code=500,
             detail=f"Error generating recommendations: {str(e)}"
         )
+
+@app.post("/recommendations/")
+async def get_recommendations(
+    email: str = Form(...),
+    skills: str = Form(...),
+    location: str = Form(...),
+    experience: str = Form(""),
+    education: str = Form(""),
+    interests: str = Form(""),
+    resume: UploadFile = File(None)
+):
+    try:
+        logger.info(f"Processing request for {email} with skills: {skills}")
+
+        # Process resume if provided
+        # ... (keep existing resume processing code)
+
+        # Career analysis prompt
+        career_prompt = """
+        Based on these skills: {skills} and location: {location}, provide a career recommendation.
+        
+        Respond with ONLY a JSON object in this EXACT format, no additional text or explanation:
+        {{
+            "job_title": "Best matching job title",
+            "confidence_score": 0.85,
+            "required_skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
+            "learning_roadmap": {{
+                "immediate": ["skill1", "skill2"],
+                "short_term": ["skill3", "skill4"],
+                "long_term": ["skill5", "skill6"]
+            }},
+            "learning_resources": {{
+                "courses": [
+                    {{
+                        "title": "Complete Python Developer Course",
+                        "platform": "Udemy",
+                        "link": "https://www.udemy.com/course/complete-python-developer",
+                        "price": "$12.99",
+                        "rating": 4.8,
+                        "skill": "Python"
+                    }},
+                    {{
+                        "title": "React - The Complete Guide",
+                        "platform": "Coursera",
+                        "link": "https://www.coursera.org/learn/react-complete-guide",
+                        "price": "$49.99",
+                        "rating": 4.7,
+                        "skill": "React"
+                    }}
+                ],
+                "additional_resources": [
+                    {{
+                        "title": "MDN Web Docs",
+                        "type": "Documentation",
+                        "link": "https://developer.mozilla.org",
+                        "description": "Comprehensive web development documentation"
+                    }},
+                    {{
+                        "title": "freeCodeCamp",
+                        "type": "Interactive Learning",
+                        "link": "https://www.freecodecamp.org",
+                        "description": "Free coding tutorials and certifications"
+                    }}
+                ]
+            }},
+            "relevant_jobs": [
+                {{
+                    "title": "Senior Software Engineer",
+                    "company": "Example Corp",
+                    "location": "Remote",
+                    "salary": "$120,000 - $150,000",
+                    "skills": ["Python", "JavaScript", "AWS"],
+                    "link": "https://example.com/jobs/123"
+                }},
+                {{
+                    "title": "Software Developer",
+                    "company": "Tech Solutions Inc",
+                    "location": "New York, NY",
+                    "salary": "$90,000 - $120,000",
+                    "skills": ["React", "Node.js", "SQL"],
+                    "link": "https://example.com/jobs/456"
+                }}
+            ]
+        }}
+        """.format(skills=skills, location=location)
+
+        # Get career recommendation
+        career_response = groq_client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a career advisor. Respond only with the requested JSON format, including job listings. No additional text."
+                },
+                {
+                    "role": "user",
+                    "content": career_prompt
+                }
+            ],
+            model="mixtral-8x7b-32768",
+            temperature=0.7,
+            max_tokens=1000
+        )
+
+        # Clean and parse career response
+        career_text = career_response.choices[0].message.content.strip()
+        logger.info(f"Raw career response: {career_text}")
+
+        # Find the JSON object in the response
+        try:
+            start_idx = career_text.find('{')
+            end_idx = career_text.rfind('}') + 1
+            if start_idx == -1 or end_idx == 0:
+                raise ValueError("No JSON object found in response")
+            
+            career_json = career_text[start_idx:end_idx]
+            career_data = json.loads(career_json)
+            logger.info("Successfully parsed career data")
+            
+            # After parsing career_data, ensure learning resources exist
+            if not career_data.get('learning_resources'):
+                # Create learning resources based on the required skills
+                skills_courses = []
+                for skill in career_data.get('required_skills', [])[:2]:  # Get first two skills
+                    if skill.lower() == 'python':
+                        skills_courses.append({
+                            "title": "Complete Python Bootcamp",
+                            "platform": "Udemy",
+                            "link": "https://www.udemy.com/course/complete-python-bootcamp/",
+                            "price": "$12.99",
+                            "rating": 4.8,
+                            "skill": "Python"
+                        })
+                    elif 'javascript' in skill.lower():
+                        skills_courses.append({
+                            "title": "Modern JavaScript from the Beginning",
+                            "platform": "Udemy",
+                            "link": "https://www.udemy.com/course/modern-javascript/",
+                            "price": "$14.99",
+                            "rating": 4.7,
+                            "skill": "JavaScript"
+                        })
+                    else:
+                        skills_courses.append({
+                            "title": f"Complete {skill} Course",
+                            "platform": "Coursera",
+                            "link": "https://www.coursera.org",
+                            "price": "$49.99",
+                            "rating": 4.6,
+                            "skill": skill
+                        })
+
+                career_data['learning_resources'] = {
+                    "courses": skills_courses,
+                    "additional_resources": [
+                        {
+                            "title": "freeCodeCamp",
+                            "type": "Interactive Learning",
+                            "link": "https://www.freecodecamp.org",
+                            "description": "Free coding tutorials and certifications for web development"
+                        },
+                        {
+                            "title": "MDN Web Docs",
+                            "type": "Documentation",
+                            "link": "https://developer.mozilla.org",
+                            "description": "Comprehensive web development documentation and tutorials"
+                        },
+                        {
+                            "title": "GitHub Learning Lab",
+                            "type": "Interactive Learning",
+                            "link": "https://lab.github.com",
+                            "description": "Learn essential developer tools and workflows"
+                        }
+                    ]
+                }
+
+            # Prepare final response with all necessary data
+            response_data = {
+                "job_title": career_data["job_title"],
+                "confidence_score": career_data["confidence_score"],
+                "required_skills": career_data["required_skills"],
+                "learning_roadmap": career_data["learning_roadmap"],
+                "learning_resources": career_data["learning_resources"],  # Ensure this is included
+                "relevant_jobs": career_data.get("relevant_jobs", [])
+            }
+
+            logger.info("Response data structure:")
+            logger.info(json.dumps(response_data, indent=2))
+
+            # Generate specific course recommendations based on skills and career path
+            learning_prompt = f"""
+            As a career advisor, recommend specific online courses and learning resources for someone pursuing a career as a {career_data['job_title']} 
+            with these skills: {skills}.
+            Focus on their learning roadmap: {json.dumps(career_data['learning_roadmap'])}
+            
+            Return ONLY a JSON object in this EXACT format:
+            {{
+                "courses": [
+                    {{
+                        "title": "Exact course title from a real platform",
+                        "platform": "Platform name (Udemy/Coursera/etc)",
+                        "link": "Actual course URL",
+                        "price": "Current price in USD",
+                        "rating": "Course rating (1-5)",
+                        "skill": "Primary skill taught",
+                        "difficulty": "Beginner/Intermediate/Advanced"
+                    }}
+                ],
+                "additional_resources": [
+                    {{
+                        "title": "Resource name",
+                        "type": "Documentation/Tutorial/Practice/Community",
+                        "link": "Resource URL",
+                        "description": "Brief description focusing on career relevance",
+                        "format": "Video/Text/Interactive"
+                    }}
+                ]
+            }}
+            
+            Focus on:
+            1. Real, currently available courses
+            2. Mix of free and paid resources
+            3. Resources matching their skill level
+            4. Courses aligned with immediate and short-term skills
+            5. Popular and highly-rated content
+            """
+
+            learning_response = groq_client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are an expert technical education advisor with deep knowledge of programming courses and learning resources. Provide specific, real course recommendations from major platforms."
+                    },
+                    {
+                        "role": "user",
+                        "content": learning_prompt
+                    }
+                ],
+                model="mixtral-8x7b-32768",
+                temperature=0.7,
+                max_tokens=1500
+            )
+
+            try:
+                learning_text = learning_response.choices[0].message.content.strip()
+                learning_resources = json.loads(learning_text)
+                
+                # Validate and clean the response
+                if not isinstance(learning_resources.get('courses'), list):
+                    raise ValueError("Invalid courses format")
+                if not isinstance(learning_resources.get('additional_resources'), list):
+                    raise ValueError("Invalid additional resources format")
+
+                # Ensure we have at least some recommendations
+                if len(learning_resources['courses']) == 0:
+                    raise ValueError("No courses provided")
+
+            except Exception as e:
+                logger.error(f"Error parsing learning resources: {e}")
+                # Provide fallback recommendations based on career path
+                learning_resources = {
+                    "courses": [
+                        {
+                            "title": f"Complete {career_data['job_title']} Bootcamp 2024",
+                            "platform": "Udemy",
+                            "link": "https://www.udemy.com",
+                            "price": "$13.99",
+                            "rating": 4.8,
+                            "skill": career_data['required_skills'][0] if career_data['required_skills'] else "Programming",
+                            "difficulty": "Beginner"
+                        },
+                        {
+                            "title": f"Advanced {career_data['job_title']} Specialization",
+                            "platform": "Coursera",
+                            "link": "https://www.coursera.org",
+                            "price": "$49.99",
+                            "rating": 4.7,
+                            "skill": career_data['required_skills'][1] if len(career_data['required_skills']) > 1 else "Development",
+                            "difficulty": "Intermediate"
+                        }
+                    ],
+                    "additional_resources": [
+                        {
+                            "title": "freeCodeCamp",
+                            "type": "Interactive Learning",
+                            "link": "https://www.freecodecamp.org",
+                            "description": f"Free certification program covering essential {career_data['job_title']} skills",
+                            "format": "Interactive"
+                        },
+                        {
+                            "title": "MDN Web Docs",
+                            "type": "Documentation",
+                            "link": "https://developer.mozilla.org",
+                            "description": "Comprehensive web development documentation and tutorials",
+                            "format": "Text"
+                        }
+                    ]
+                }
+
+            # Update career_data with learning resources
+            career_data['learning_resources'] = learning_resources
+
+            # Prepare final response
+            response_data = {
+                "job_title": career_data["job_title"],
+                "confidence_score": career_data["confidence_score"],
+                "required_skills": career_data["required_skills"],
+                "learning_roadmap": career_data["learning_roadmap"],
+                "learning_resources": career_data["learning_resources"],
+                "relevant_jobs": career_data.get("relevant_jobs", [])
+            }
+
+            logger.info("Successfully prepared final response with learning resources")
+            return response_data
+
+        except Exception as e:
+            logger.error(f"Career parsing error: {e}")
+            logger.error(f"Attempted to parse: {career_text}")
+            raise HTTPException(status_code=500, detail="Failed to parse career response")
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/job-openings")
+async def get_job_openings(title: str = Query(...)):
+    try:
+        # Here you would implement the logic to fetch job openings based on the title
+        # For demonstration, let's return some mock data
+        job_openings = [
+            {
+                "title": f"Senior {title}",
+                "company": "Tech Company A",
+                "location": "Remote",
+                "salary": "$120,000 - $150,000",
+                "skills": ["Python", "Django", "REST APIs"],
+                "link": "https://example.com/job-a"
+            },
+            {
+                "title": f"Junior {title}",
+                "company": "Tech Company B",
+                "location": "New York, NY",
+                "salary": "$80,000 - $100,000",
+                "skills": ["JavaScript", "React"],
+                "link": "https://example.com/job-b"
+            }
+        ]
+        return job_openings
+    except Exception as e:
+        logger.error(f"Error fetching job openings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch job openings")
 
 # unicorn
 if __name__ == "__main__":

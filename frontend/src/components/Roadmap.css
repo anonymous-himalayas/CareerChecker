@@ -10,13 +10,11 @@
 
 .roadmap-container {
   position: relative;
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2.5rem;
-  padding-top: 4rem;
-  background-color: var(--card-background);
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .roadmap-container h1 {
@@ -28,28 +26,28 @@
 }
 
 .recommendation-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #e2e8f0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .recommendation-header h2 {
-  color: var(--text-primary);
-  font-size: 1.5rem;
-  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
 }
 
 .confidence-score {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 0.75rem 1.5rem;
+  display: inline-block;
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.5rem 1rem;
   border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .skills-section {
@@ -246,21 +244,32 @@
   text-decoration: underline;
 }
 
+.jobs-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+}
+
+.jobs-section h3 {
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
 .jobs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 1rem;
 }
 
 .job-card {
-  background-color: #f8fafc;
-  padding: 1.5rem;
-  border-radius: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
 }
 
 .job-card:hover {
@@ -269,26 +278,206 @@
 }
 
 .job-card h4 {
-  color: var(--primary-color);
-  margin-bottom: 1rem;
+  color: #2563eb;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
 }
 
 .job-details {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: var(--text-secondary);
+  margin: 0.5rem 0;
   font-size: 0.9rem;
+  color: #64748b;
 }
 
 .job-skills {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-.job-skills .skill-tag {
+.skill-tag {
+  background: #e2e8f0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
   font-size: 0.8rem;
+  color: #475569;
+}
+
+.required-skills {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.required-skills h3 {
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.required-skills h3::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.skill-card {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  color: #334155;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.skill-card::before {
+  content: '✦';
+  color: var(--primary-color);
+  font-size: 1.1em;
+}
+
+.skill-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-color);
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Add these styles for the learning resources section */
+
+.learning-resources-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.resources-title {
+  color: #1e293b;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.resources-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.resources-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  color: #334155;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.courses-grid, .resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.course-card, .resource-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.course-card:hover, .resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+.course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.platform-badge, .resource-type-badge {
+  background: #dbeafe;
+  color: #1e40af;
   padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+}
+
+.course-rating {
+  color: #eab308;
+  font-weight: 500;
+}
+
+.course-title, .resource-title {
+  color: #1e293b;
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.course-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.course-price {
+  color: #059669;
+  font-weight: 500;
+}
+
+.resource-description {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .courses-grid, .resources-grid {
+    grid-template-columns: 1fr;
+  }
 } 
