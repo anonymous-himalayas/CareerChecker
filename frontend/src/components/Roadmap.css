@@ -13,9 +13,9 @@
 
 .roadmap-container {
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
   background: #f8fafc;
   min-height: 100vh;
 }
@@ -29,18 +29,30 @@
 }
 
 .recommendation-header {
+  margin-bottom: 2rem;
   text-align: center;
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
 }
 
-.recommendation-header h2 {
-  color: var(--text-dark);
-  font-size: 2rem;
-  margin-bottom: 1rem;
+.role-container {
+  margin-bottom: 2rem;
+}
+
+.recommended-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0.5rem 0;
+  background: var(--gradient-primary);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .confidence-score {
@@ -83,16 +95,23 @@
 
 .timeline {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rem;
   margin-top: 1.5rem;
 }
 
 .timeline-section {
-  background: var(--background-light);
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color);
+  background: #f8fafc;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.timeline-title {
+  font-size: 1.5rem;
+  color: #4f46e5;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
 }
 
 .timeline-section h4 {
@@ -149,6 +168,7 @@
   line-height: 1.6;
 }
 
+
 .loading {
   text-align: center;
   padding: 3rem;
@@ -157,23 +177,20 @@
 }
 
 .back-button {
-  position: absolute;
-  left: 2rem;
-  top: 2rem;
-  background: var(--primary-color);
+  background: var(--gradient-primary);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .back-button:hover {
-  background: var(--primary-light);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .resources-section,
@@ -370,9 +387,12 @@
 }
 
 .section-title {
-  color: #334155;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .courses-grid, .resources-grid {
@@ -468,6 +488,7 @@
 
 .courses-section, .additional-resources {
   margin-bottom: 2rem;
+  margin-top: 2rem;
 }
 
 .courses-section h4, .additional-resources h4 {
@@ -724,5 +745,123 @@
   
   .job-card {
     padding: 1rem;
+  }
+}
+
+/* Gamification Panel Styles */
+.gamification-panel {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+.level-info h3,
+.active-quests h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.level-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.level-circle {
+  width: 60px;
+  height: 60px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+.level-details {
+  flex: 1;
+}
+
+.level-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.xp-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.quest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.quest-item {
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.quest-info h4 {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.quest-info p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.quest-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.xp-reward {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-purple);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .gamification-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .role-title {
+    font-size: 2.5rem;
   }
 } 

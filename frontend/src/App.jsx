@@ -34,6 +34,10 @@ function App() {
             />
           } 
         />
+        <Route 
+          path="/gamification" 
+          element={<GamificationPanel />}
+        />
       </Routes>
     </Router>
   );
