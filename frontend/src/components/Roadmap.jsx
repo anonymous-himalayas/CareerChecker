@@ -484,6 +484,98 @@ const Roadmap = ({ recommendations }) => {
         }
       ]
     },
+    "Frontend Web Developer": {
+      "courses": [
+        {
+          title: "The Web Developer Bootcamp 2021",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/the-web-developer-bootcamp/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Web Development",
+          difficulty: "Beginner"
+        },
+        {
+          title: "React - The Complete Guide (incl Hooks, React Router, Redux)",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "React",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "Node.js - The Complete Guide",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/nodejs-the-complete-guide/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Node.js",
+          difficulty: "Intermediate"
+        }
+      ], "additional_resources": [
+        {
+          title: "freeCodeCamp",
+          type: "Online Learning Platform",
+          link: "https://www.freecodecamp.org",
+          description: "Learn to code and build projects for nonprofits",
+          format: "Interactive"
+        },
+        {
+          title: "MDN Web Docs",
+          type: "Documentation",
+          link: "https://developer.mozilla.org",
+          description: "Comprehensive web development documentation",
+          format: "Text"
+        }
+      ]
+    },
+    "Backend Developer": {
+      "courses": [
+        {
+          title: "The Complete Node.js Developer Course",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/the-complete-nodejs-developer-course-2/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Node.js",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "Django for Beginners",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/django-for-beginners/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Django",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "REST API with Flask and Python",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/rest-api-flask-and-python/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Flask",
+          difficulty: "Intermediate"
+        }
+      ], "additional_resources": [
+        {
+          title: "Node.js Documentation",
+          type: "Documentation",
+          link: "https://nodejs.org/en/docs/",
+          description: "Official Node.js documentation",
+          format: "Text"
+        },
+        {
+          title: "Django Documentation",
+          type: "Documentation",
+          link: "https://docs.djangoproject.com/en/3.2/",
+          description: "Official Django documentation",
+          format: "Text"
+        }
+      ]
+    },
     "Low Level Systems Programmer": {
       "courses": [
         {
@@ -652,6 +744,46 @@ const Roadmap = ({ recommendations }) => {
         link: "https://www.linkedin.com/jobs/",
         skills: ["React", "JavaScript", "HTML/CSS"]
       },
+      {
+        company: "Digital Solutions",
+        title: "Full Stack Developer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Node.js", "React", "MongoDB"]
+      }
+    ],
+    "Backend Developer": [
+      {
+        company: "TechCorp",
+        title: "Backend Developer",
+        location: "San Francisco, CA",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Java", "Spring Boot", "SQL"]
+      },
+
+      {
+        company: "WebTech",
+        title: "Full Stack Developer",
+        location: "Austin, TX",
+
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "Node.js", "MongoDB"]
+      }
+    ],
+    "Frontend Web Developer": [
+      {
+        company: "WebTech",
+        title: "Frontend Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+
+        skills: ["React", "JavaScript", "HTML/CSS"]
+      },
+
       {
         company: "Digital Solutions",
         title: "Full Stack Developer",
