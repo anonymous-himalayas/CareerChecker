@@ -43,17 +43,19 @@ const CareerForm = ({ onRecommendations }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify({ email: formData.email })
       });
 
       if (!userResponse.ok) {
-        const errorData = await userResponse.json();
-        throw new Error(errorData.detail || 'Failed to create user');
+        const errorText = await userResponse.text();
+        console.error('User Response Error:', errorText);
+        throw new Error('Failed to create user');
       }
 
       const userData = await userResponse.json();
-      const userId = userData.id; // Get the actual user ID from response
+      const userId = userData.id;
 
       // Convert skills string to array and remove whitespace
       const skillsArray = formData.skills.split(',').map(skill => skill.trim());
@@ -74,26 +76,48 @@ const CareerForm = ({ onRecommendations }) => {
       // Update profile
       const profileResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/profile/${userId}`, {
         method: 'POST',
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        },
         body: formDataToSend,
       });
 
       if (!profileResponse.ok) {
+        const errorText = await profileResponse.text();
+        console.error('Profile Response Error:', errorText);
         throw new Error('Failed to update profile');
       }
 
       // Get recommendations
-      const recommendationsResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/recommendations/${userId}`);
+      const recommendationsResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/recommendations/${userId}`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
       
       if (!recommendationsResponse.ok) {
+        const errorText = await recommendationsResponse.text();
+        console.error('Recommendations Response Error:', errorText);
         throw new Error('Failed to get recommendations');
       }
 
-      const recommendations = await recommendationsResponse.json();
+      let recommendations;
+      try {
+        recommendations = await recommendationsResponse.json();
+      } catch (jsonError) {
+        console.error('JSON Parse Error:', jsonError);
+        const responseText = await recommendationsResponse.text();
+        console.error('Raw Response:', responseText);
+        throw new Error('Invalid response format from server');
+      }
+
+      console.log('Received recommendations:', recommendations);
       setSuccess(true);
       onRecommendations(recommendations);
 
     } catch (err) {
-      setError(err.message);
+      console.error('Full error:', err);
+      setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
