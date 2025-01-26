@@ -2,56 +2,43 @@ import React, { useEffect } from 'react';
 import './Roadmap.css';
 
 const Roadmap = ({ recommendations, onBack }) => {
-  useEffect(() => {
-    console.log('Full recommendations:', recommendations);
-  }, [recommendations]);
-
   // Default courses mapping based on role
   const defaultCourses = {
     "Data Scientist": {
-      "courses": [
+      courses: [
         {
-          "title": "Data Science and Machine Learning Bootcamp with R",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/data-science-and-machine-learning-bootcamp-with-r/",
-          "price": "$12.99",
-          "rating": 4.7,
-          "skill": "Data Science",
-          "difficulty": "Beginner"
+          title: "Complete SQL Mastery",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/complete-sql-mastery/",
+          price: "$13.99",
+          rating: 4.8,
+          skill: "SQL",
+          difficulty: "Intermediate"
         },
         {
-          "title": "Machine Learning A-Z™: Hands-On Python & R In Data Science",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/machinelearning/",
-          "price": "$12.99",
-          "rating": 4.5,
-          "skill": "Machine Learning",
-          "difficulty": "Intermediate"
-        },
-        {
-          "title": "Deep Learning A-Z™: Hands-On Artificial Neural Networks",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/deeplearning/",
-          "price": "$12.99",
-          "rating": 4.6,
-          "skill": "Deep Learning",
-          "difficulty": "Advanced"
+          title: "Python for Data Science and Machine Learning",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/",
+          price: "$14.99",
+          rating: 4.9,
+          skill: "Python",
+          difficulty: "Intermediate"
         }
       ],
-      "additional_resources": [
+      additional_resources: [
         {
-          "title": "Kaggle",
-          "type": "Practice Platform",
-          "link": "https://www.kaggle.com",
-          "description": "Compete in machine learning challenges and build your data science portfolio",
-          "format": "Interactive"
+          title: "AWS Machine Learning",
+          type: "Documentation",
+          link: "https://aws.amazon.com/machine-learning/",
+          description: "Learn about AWS Machine Learning services",
+          format: "Text"
         },
         {
-          "title": "DataCamp",
-          "type": "Online Learning Platform",
-          "link": "https://www.datacamp.com",
-          "description": "Learn data science and machine learning through interactive courses",
-          "format": "Interactive"
+          title: "Machine Learning Documentation",
+          type: "Documentation",
+          link: "https://scikit-learn.org/stable/",
+          description: "Official ML documentation and tutorials",
+          format: "Text"
         }
       ]
     },
@@ -357,45 +344,138 @@ const Roadmap = ({ recommendations, onBack }) => {
     },
   };
 
-  // Fallback courses for unknown roles
-  const fallbackCourses = {
-    courses: [
+  const jobListings = {
+    "Data Scientist": [
       {
-        title: "Git Complete: The definitive guide",
-        platform: "Udemy",
-        link: "https://www.udemy.com/course/git-complete/",
-        price: "$12.99",
-        rating: 4.7,
-        skill: "Git",
-        difficulty: "Beginner"
+        company: "TechCorp",
+        title: "Senior Data Scientist",
+        location: "San Francisco, CA",
+        salary: "$140,000 - $180,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Python", "Machine Learning", "SQL", "AWS"]
       },
       {
-        title: "Data Structures and Algorithms",
-        platform: "Coursera",
-        link: "https://www.coursera.org/learn/algorithms-part1",
-        price: "$49.99",
-        rating: 4.8,
-        skill: "DSA",
-        difficulty: "Intermediate"
+        company: "AI Solutions",
+        title: "Machine Learning Engineer",
+        location: "Remote",
+        salary: "$130,000 - $160,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["TensorFlow", "Python", "Deep Learning"]
       }
     ],
-    additional_resources: [
+    "Data Analyst": [
       {
-        title: "GitHub Learning Lab",
-        type: "Interactive Tutorial",
-        link: "https://lab.github.com",
-        description: "Learn essential GitHub workflows",
-        format: "Interactive"
+        company: "DataCo",
+        title: "Business Intelligence Analyst",
+        location: "New York, NY",
+        salary: "$85,000 - $110,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["SQL", "Tableau", "Excel", "Python"]
       },
       {
-        title: "LeetCode",
-        type: "Practice Platform",
-        link: "https://leetcode.com",
-        description: "Practice coding problems",
-        format: "Interactive"
+        company: "Analytics Inc",
+        title: "Data Analyst",
+        location: "Chicago, IL",
+        salary: "$75,000 - $95,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Power BI", "SQL", "Python"]
+      }
+    ],
+    "Web Developer": [
+      {
+        company: "WebTech",
+        title: "Frontend Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "JavaScript", "HTML/CSS"]
+      },
+      {
+        company: "Digital Solutions",
+        title: "Full Stack Developer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Node.js", "React", "MongoDB"]
+      }
+    ],
+    "Frontend Developer": [
+      {
+        company: "WebTech",
+        title: "Frontend Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "JavaScript", "HTML/CSS"]
+      },
+      {
+        company: "Digital Solutions",
+        title: "Full Stack Developer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Node.js", "React", "MongoDB"]
+      }
+    ],
+    "Data Engineer": [
+      {
+        company: "DataCo",
+        title: "Data Engineer",
+        location: "San Francisco, CA",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Hadoop", "Spark", "SQL", "Python"]
+      },
+      {
+        company: "Tech Solutions",
+        title: "Big Data Engineer",
+        location: "Remote",
+        salary: "$130,000 - $160,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Kafka", "Hive", "AWS"]
+      }
+    ],
+    "Software Engineer": [
+      {
+        company: "TechCorp",
+        title: "Software Engineer",
+        location: "San Francisco, CA",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Java", "Spring Boot", "SQL"]
+      },
+      {
+        company: "WebTech",
+        title: "Full Stack Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "Node.js", "MongoDB"]
+      }
+    ],
+    "Machine Learning Engineer": [
+      {
+        company: "AI Solutions",
+        title: "Machine Learning Engineer",
+        location: "Remote",
+        salary: "$130,000 - $160,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["TensorFlow", "Python", "Deep Learning"]
+      },
+      {
+        company: "TechCorp",
+        title: "Senior Machine Learning Engineer",
+        location: "San Francisco, CA",
+        salary: "$140,000 - $180,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Python", "Machine Learning", "AWS"]
       }
     ]
   };
+
+  useEffect(() => {
+    console.log('Full recommendations:', recommendations);
+  }, [recommendations]);
 
   if (!recommendations) {
     return <div className="loading">Loading recommendations...</div>;
@@ -403,20 +483,25 @@ const Roadmap = ({ recommendations, onBack }) => {
 
   const { 
     job_title = '', 
-    confidence_score, 
-    required_skills, 
-    learning_roadmap,
-    learning_resources,
-    relevant_jobs = [] 
+    confidence_score = 0,
+    required_skills = [],
+    learning_roadmap = {
+      immediate: [],
+      short_term: [],
+      long_term: []
+    }
   } = recommendations;
 
   // Get role-specific resources or fallback to default
-  const displayResources = defaultCourses[job_title] || fallbackCourses;
+  const displayResources = defaultCourses[job_title] || {
+    courses: [],
+    additional_resources: []
+  };
 
-  console.log('Job Title:', job_title);
-  console.log('Display Resources:', displayResources);
+  // Get job listings based on career
+  const careerJobs = jobListings[job_title] || [];
 
-  // Helper function to get difficulty color
+  // Helper functions
   const getDifficultyColor = (difficulty) => {
     switch(difficulty?.toLowerCase()) {
       case 'beginner':
@@ -430,11 +515,10 @@ const Roadmap = ({ recommendations, onBack }) => {
     }
   };
 
-  // Helper function to get format icon
   const getFormatIcon = (format) => {
     switch(format?.toLowerCase()) {
       case 'video':
-        return '��';
+        return '🎥';
       case 'text':
         return '📚';
       case 'interactive':
@@ -443,10 +527,6 @@ const Roadmap = ({ recommendations, onBack }) => {
         return '📌';
     }
   };
-
-  // Ensure we have valid resources to display
-  const coursesToDisplay = displayResources?.courses || fallbackCourses.courses;
-  const additionalResourcesToDisplay = displayResources?.additional_resources || fallbackCourses.additional_resources;
 
   return (
     <div className="roadmap-container">
@@ -508,7 +588,7 @@ const Roadmap = ({ recommendations, onBack }) => {
         <div className="courses-section">
           <h4>Recommended Courses</h4>
           <div className="courses-grid">
-            {coursesToDisplay.map((course, index) => (
+            {displayResources.courses.map((course, index) => (
               <a
                 key={index}
                 href={course.link}
@@ -538,7 +618,7 @@ const Roadmap = ({ recommendations, onBack }) => {
         <div className="additional-resources">
           <h4>Additional Learning Resources</h4>
           <div className="resources-grid">
-            {additionalResourcesToDisplay.map((resource, index) => (
+            {displayResources.additional_resources.map((resource, index) => (
               <a
                 key={index}
                 href={resource.link}
@@ -560,34 +640,40 @@ const Roadmap = ({ recommendations, onBack }) => {
         </div>
       </div>
 
-      {relevant_jobs.length > 0 && (
-        <div className="jobs-section">
-          <h3>Featured Job Openings</h3>
-          <div className="jobs-grid">
-            {relevant_jobs.slice(0, 2).map((job, index) => (
-              <a 
-                key={index} 
-                href={job.link} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="job-card"
-              >
+      <div className="job-listings-section">
+        <h3>Featured Job Opportunities for {job_title}</h3>
+        <div className="jobs-grid">
+          {careerJobs.map((job, index) => (
+            <a
+              key={index}
+              href={job.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="job-card"
+            >
+              <div className="job-header">
                 <h4>{job.title}</h4>
-                <div className="job-details">
-                  <span>🏢 {job.company}</span>
-                  <span>📍 {job.location}</span>
-                  <span>�� {job.salary}</span>
+                <div className="company-name">{job.company}</div>
+              </div>
+              <div className="job-details">
+                <div className="detail-item">
+                  <span className="icon">📍</span>
+                  {job.location}
                 </div>
-                <div className="job-skills">
-                  {job.skills.map((skill, i) => (
-                    <span key={i} className="skill-tag">{skill}</span>
-                  ))}
+                <div className="detail-item">
+                  <span className="icon">💰</span>
+                  {job.salary}
                 </div>
-              </a>
-            ))}
-          </div>
+              </div>
+              <div className="job-skills">
+                {job.skills.map((skill, i) => (
+                  <span key={i} className="skill-tag">{skill}</span>
+                ))}
+              </div>
+            </a>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
