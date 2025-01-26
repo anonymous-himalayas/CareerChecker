@@ -16,9 +16,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="./" element={<LandingPage />} />
         <Route 
-          path="/career-form" 
+          path="./career-form" 
           element={
             <CareerForm 
               onRecommendations={handleRecommendations}
@@ -26,7 +26,7 @@ function App() {
           } 
         />
         <Route 
-          path="/roadmap" 
+          path="./roadmap" 
           element={
             <Roadmap 
               recommendations={recommendations}
@@ -35,7 +35,7 @@ function App() {
           } 
         />
         <Route 
-          path="/gamification" 
+          path="./gamification" 
           element={<GamificationPanel />}
         />
       </Routes>
