@@ -2,8 +2,198 @@ import React, { useEffect } from 'react';
 import './Roadmap.css';
 
 const Roadmap = ({ recommendations, onBack }) => {
-  // Default courses mapping based on role
+
   const defaultCourses = {
+    "Senior Data Scientist": {
+      courses: [
+        {
+          title: "Machine Learning A-Z™: Hands-On Python & R In Data Science",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/machinelearning/",
+          price: "$12.99",
+          rating: 4.5,
+          skill: "Machine Learning",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "Deep Learning Specialization",
+          platform: "Coursera",
+          link: "https://www.coursera.org/specializations/deep-learning",
+          price: "$49/month",
+          rating: 4.8,
+          skill: "Deep Learning",
+          difficulty: "Advanced"
+        }
+      ],
+      additional_resources: [
+        {
+          title: "Machine Learning Documentation",
+          type: "Documentation",
+          link: "https://scikit-learn.org/stable/",
+          description: "Official ML documentation and tutorials",
+          format: "Text"
+        },
+        {
+          title: "Deep Learning Book",
+          type: "Book",
+          link: "https://www.deeplearningbook.org/",
+          description: "Comprehensive deep learning book by Ian Goodfellow",
+          format: "Text"
+        }
+      ]
+    },
+    "Senior Software Engineer": {
+      courses: [
+        {
+          title: "System Design Interview",
+          platform: "Educative",
+          link: "https://www.educative.io/courses/grokking-the-system-design-interview",
+          price: "$59",
+          rating: 4.8,
+          skill: "System Design",
+          difficulty: "Advanced"
+        },
+        {
+          title: "Cracking the Coding Interview",
+          platform: "Amazon",
+          link: "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850",
+          price: "$26.49",
+          rating: 4.6,
+          skill: "Coding",
+          difficulty: "Intermediate"
+        }
+      ],
+      additional_resources: [
+        {
+          title: "LeetCode",
+          type: "Practice Platform",
+          link: "https://leetcode.com",
+          description: "Practice coding problems and prepare for technical interviews",
+          format: "Interactive"
+        },
+        {
+          title: "HackerRank",
+          type: "Practice Platform",
+          link: "https://www.hackerrank.com",
+          description: "Practice coding problems and compete in contests",
+          format: "Interactive"
+        }
+      ]
+    },
+    "Data Engineer": {
+      courses: [
+        {
+          title: "Data Engineering Nanodegree",
+          platform: "Udacity",
+          link: "https://www.udacity.com/course/data-engineer-nanodegree--nd027",
+          price: "$399/month",
+          rating: 4.6,
+          skill: "Data Engineering",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "Big Data Specialization",
+          platform: "Coursera",
+          link: "https://www.coursera.org/specializations/big-data",
+          price: "$49/month",
+          rating: 4.7,
+          skill: "Big Data",
+          difficulty: "Intermediate"
+        }
+      ],
+      additional_resources: [
+        {
+          title: "Data Engineering on Google Cloud Platform Specialization",
+          type: "Coursera Specialization",
+          link: "https://www.coursera.org/specializations/gcp-data-machine-learning",
+          description: "Learn to design, build, and operate systems on Google Cloud Platform",
+          format: "Video"
+        },
+        {
+          title: "Data Engineering Cookbook",
+          type: "Book",
+          link: "https://www.oreilly.com/library/view/data-engineering-cookbook/9781491995841/",
+          description: "Recipes for building scalable data pipelines",
+          format: "Text"
+        }
+      ]
+    },
+    "Full Stack Software Engineer": {
+      courses: [
+        {
+          title: "The Web Developer Bootcamp 2021",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/the-web-developer-bootcamp/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Web Development",
+          difficulty: "Beginner"
+        },
+        {
+          title: "React - The Complete Guide (incl Hooks, React Router, Redux)",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "React",
+          difficulty: "Intermediate"
+        }
+      ],
+      additional_resources: [
+        {
+          title: "freeCodeCamp",
+          type: "Online Learning Platform",
+          link: "https://www.freecodecamp.org",
+          description: "Learn to code and build projects for nonprofits",
+          format: "Interactive"
+        },
+        {
+          title: "MDN Web Docs",
+          type: "Documentation",
+          link: "https://developer.mozilla.org",
+          description: "Comprehensive web development documentation",
+          format: "Text"
+        }
+      ]
+    },
+    "Senior Frontend Developer": {
+      courses: [
+        {
+          title: "Advanced CSS and Sass: Flexbox, Grid, Animations and More!",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/advanced-css-and-sass/",
+          price: "$12.99",
+          rating: 4.8,
+          skill: "CSS",
+          difficulty: "Intermediate"
+        },
+        {
+          title: "React - The Complete Guide (incl Hooks, React Router, Redux)",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "React",
+          difficulty: "Intermediate"
+        }
+      ],
+      additional_resources: [
+        {
+          title: "Frontend Masters",
+          type: "Online Learning Platform",
+          link: "https://frontendmasters.com",
+          description: "Advance your skills with in-depth frontend development courses",
+          format: "Video"
+        },
+        {
+          title: "CodePen",
+          type: "Development Tool",
+          link: "https://codepen.io",
+          description: "Frontend development playground for HTML, CSS, and JavaScript",
+          format: "Interactive"
+        }
+      ]
+    },
     "Data Scientist": {
       courses: [
         {
@@ -45,300 +235,300 @@ const Roadmap = ({ recommendations, onBack }) => {
     "Web Developer": {
       "courses": [
         {
-          "title": "The Web Developer Bootcamp 2021",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/the-web-developer-bootcamp/",
-          "price": "$12.99",
-          "rating": 4.7,
-          "skill": "Web Development",
-          "difficulty": "Beginner"
+          title: "The Web Developer Bootcamp 2021",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/the-web-developer-bootcamp/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Web Development",
+          difficulty: "Beginner"
         },
         {
-          "title": "JavaScript: Understanding the Weird Parts",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/understand-javascript/",
-          "price": "$12.99",
-          "rating": 4.8,
-          "skill": "JavaScript",
-          "difficulty": "Intermediate"
+          title: "JavaScript: Understanding the Weird Parts",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/understand-javascript/",
+          price: "$12.99",
+          rating: 4.8,
+          skill: "JavaScript",
+          difficulty: "Intermediate"
         },
         {
-          "title": "React - The Complete Guide (incl Hooks, React Router, Redux)",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
-          "price": "$12.99",
-          "rating": 4.7,
-          "skill": "React",
-          "difficulty": "Intermediate"
+          title: "React - The Complete Guide (incl Hooks, React Router, Redux)",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "React",
+          difficulty: "Intermediate"
         }
       ],
       "additional_resources": [
         {
-          "title": "freeCodeCamp",
-          "type": "Online Learning Platform",
-          "link": "https://www.freecodecamp.org",
-          "description": "Learn to code and build projects for nonprofits",
-          "format": "Interactive"
+          title: "freeCodeCamp",
+          type: "Online Learning Platform",
+          link: "https://www.freecodecamp.org",
+          description: "Learn to code and build projects for nonprofits",
+          format: "Interactive"
         },
         {
-          "title": "MDN Web Docs",
-          "type": "Documentation",
-          "link": "https://developer.mozilla.org",
-          "description": "Comprehensive web development documentation",
-          "format": "Text"
+          title: "MDN Web Docs",
+          type: "Documentation",
+          link: "https://developer.mozilla.org",
+          description: "Comprehensive web development documentation",
+          format: "Text"
         },
         {
-          "title": "CSS-Tricks",
-          "type": "Blog",
-          "link": "https://css-tricks.com",
-          "description": "Web design and development blog with CSS tips and tricks",
-          "format": "Text"
+          title: "CSS-Tricks",
+          type: "Blog",
+          link: "https://css-tricks.com",
+          description: "Web design and development blog with CSS tips and tricks",
+          format: "Text"
         }
       ]
     },
     "Frontend Developer": {
       "courses": [
         {
-          "title": "Front End Web Development Bootcamp",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/front-end-web-development-bootcamp/",
-          "price": "$12.99",
-          "rating": 4.7,
-          "skill": "Frontend Development",
-          "difficulty": "Beginner"
+          title: "Front End Web Development Bootcamp",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/front-end-web-development-bootcamp/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Frontend Development",
+          difficulty: "Beginner"
         },
         {
-          "title": "React - The Complete Guide (incl Hooks, React Router, Redux)",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
-          "price": "$12.99",
-          "rating": 4.7,
-          "skill": "React",
-          "difficulty": "Intermediate"
+          title: "React - The Complete Guide (incl Hooks, React Router, Redux)",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/react-the-complete-guide-incl-redux/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "React",
+          difficulty: "Intermediate"
         },
         {
-          "title": "Advanced CSS and Sass: Flexbox, Grid, Animations and More!",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/advanced-css-and-sass/",
-          "price": "$12.99",
-          "rating": 4.8,
-          "skill": "CSS",
-          "difficulty": "Intermediate"
+          title: "Advanced CSS and Sass: Flexbox, Grid, Animations and More!",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/advanced-css-and-sass/",
+          price: "$12.99",
+          rating: 4.8,
+          skill: "CSS",
+          difficulty: "Intermediate"
         }
       ],
       "additional_resources": [
         {
-          "title": "Frontend Masters",
-          "type": "Online Learning Platform",
-          "link": "https://frontendmasters.com",
-          "description": "Advance your skills with in-depth frontend development courses",
-          "format": "Video"
+          title: "Frontend Masters",
+          type: "Online Learning Platform",
+          link: "https://frontendmasters.com",
+          description: "Advance your skills with in-depth frontend development courses",
+          format: "Video"
         },
         {
-          "title": "CodePen",
-          "type": "Development Tool",
-          "link": "https://codepen.io",
-          "description": "Frontend development playground for HTML, CSS, and JavaScript",
-          "format": "Interactive"
+          title: "CodePen",
+          type: "Development Tool",
+          link: "https://codepen.io",
+          description: "Frontend development playground for HTML, CSS, and JavaScript",
+          format: "Interactive"
         }
       ]
     },
     "Data Engineer": {
       "courses": [
         {
-          "title": "Data Engineering Nanodegree",
-          "platform": "Udacity",
-          "link": "https://www.udacity.com/course/data-engineer-nanodegree--nd027",
-          "price": "$399/month",
-          "rating": 4.6,
-          "skill": "Data Engineering",
-          "difficulty": "Intermediate"
+          title: "Data Engineering Nanodegree",
+          platform: "Udacity",
+          link: "https://www.udacity.com/course/data-engineer-nanodegree--nd027",
+          price: "$399/month",
+          rating: 4.6,
+          skill: "Data Engineering",
+          difficulty: "Intermediate"
         },
         {
-          "title": "Big Data Specialization",
-          "platform": "Coursera",
-          "link": "https://www.coursera.org/specializations/big-data",
-          "price": "$49/month",
-          "rating": 4.7,
-          "skill": "Big Data",
-          "difficulty": "Intermediate"
+          title: "Big Data Specialization",
+          platform: "Coursera",
+          link: "https://www.coursera.org/specializations/big-data",
+          price: "$49/month",
+          rating: 4.7,
+          skill: "Big Data",
+          difficulty: "Intermediate"
         },
         {
-          "title": "Apache Spark for Data Engineers",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/apache-spark-for-data-engineers/",
-          "price": "$12.99",
-          "rating": 4.5,
-          "skill": "Apache Spark",
-          "difficulty": "Intermediate"
+          title: "Apache Spark for Data Engineers",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/apache-spark-for-data-engineers/",
+          price: "$12.99",
+          rating: 4.5,
+          skill: "Apache Spark",
+          difficulty: "Intermediate"
         }
       ],
       "additional_resources": [
         {
-          "title": "Data Engineering on Google Cloud Platform Specialization",
-          "type": "Coursera Specialization",
-          "link": "https://www.coursera.org/specializations/gcp-data-machine-learning",
-          "description": "Learn to design, build, and operate systems on Google Cloud Platform",
-          "format": "Video"
+          title: "Data Engineering on Google Cloud Platform Specialization",
+          type: "Coursera Specialization",
+          link: "https://www.coursera.org/specializations/gcp-data-machine-learning",
+          description: "Learn to design, build, and operate systems on Google Cloud Platform",
+          format: "Video"
         },
         {
-          "title": "Data Engineering Cookbook",
-          "type": "Book",
-          "link": "https://www.oreilly.com/library/view/data-engineering-cookbook/9781491995841/",
-          "description": "Recipes for building scalable data pipelines",
-          "format": "Text"
+          title: "Data Engineering Cookbook",
+          type: "Book",
+          link: "https://www.oreilly.com/library/view/data-engineering-cookbook/9781491995841/",
+          description: "Recipes for building scalable data pipelines",
+          format: "Text"
         },
         {
-          "title": "Google Cloud Platform",
-          "type": "Online Learning Platform",
-          "link": "https://cloud.google.com/training",
-          "description": "Learn data engineering on Google Cloud Platform",
-          "format": "Interactive"
+          title: "Google Cloud Platform",
+          type: "Online Learning Platform",
+          link: "https://cloud.google.com/training",
+          description: "Learn data engineering on Google Cloud Platform",
+          format: "Interactive"
         }
       ]
     },
     "Data Analyst": {
       "courses": [
         {
-          "title": "Data Analyst Nanodegree",
-          "platform": "Udacity",
-          "link": "https://www.udacity.com/course/data-analyst-nanodegree--nd002",
-          "price": "$399/month",
-          "rating": 4.6,
-          "skill": "Data Analysis",
-          "difficulty": "Intermediate"
+          title: "Data Analyst Nanodegree",
+          platform: "Udacity",
+          link: "https://www.udacity.com/course/data-analyst-nanodegree--nd002",
+          price: "$399/month",
+          rating: 4.6,
+          skill: "Data Analysis",
+          difficulty: "Intermediate"
         },
         {
-          "title": "Data Analysis and Visualization with Python",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/data-analysis-and-visualization-with-python/",
-          "price": "$12.99",
-          "rating": 4.5,
-          "skill": "Python",
-          "difficulty": "Intermediate"
+          title: "Data Analysis and Visualization with Python",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/data-analysis-and-visualization-with-python/",
+          price: "$12.99",
+          rating: 4.5,
+          skill: "Python",
+          difficulty: "Intermediate"
         },
         {
-          "title": "SQL for Data Science",
-          "platform": "Coursera",
-          "link": "https://www.coursera.org/learn/sql-for-data-science",
-          "price": "$49.99",
-          "rating": 4.7,
-          "skill": "SQL",
-          "difficulty": "Beginner"
+          title: "SQL for Data Science",
+          platform: "Coursera",
+          link: "https://www.coursera.org/learn/sql-for-data-science",
+          price: "$49.99",
+          rating: 4.7,
+          skill: "SQL",
+          difficulty: "Beginner"
         }
       ], "additional_resources": [
         {
-          "title": "Mode Analytics SQL Tutorial",
-          "type": "Tutorial",
-          "link": "https://mode.com/sql-tutorial/",
-          "description": "Learn SQL with this interactive tutorial",
-          "format": "Interactive"
+          title: "Mode Analytics SQL Tutorial",
+          type: "Tutorial",
+          link: "https://mode.com/sql-tutorial/",
+          description: "Learn SQL with this interactive tutorial",
+          format: "Interactive"
         },
         {
-          "title": "DataQuest",
-          "type": "Online Learning Platform",
-          "link": "https://www.dataquest.io",
-          "description": "Learn data science in your browser",
-          "format": "Interactive"
+          title: "DataQuest",
+          type: "Online Learning Platform",
+          link: "https://www.dataquest.io",
+          description: "Learn data science in your browser",
+          format: "Interactive"
         },
         {
-          "title": "Data.gov",
-          "type": "Data Source",
-          "link": "https://www.data.gov",
-          "description": "Open data from the US government",
-          "format": "Text"
+          title: "Data.gov",
+          type: "Data Source",
+          link: "https://www.data.gov",
+          description: "Open data from the US government",
+          format: "Text"
         }
       ],
     },
     "Software Engineer": {
       "courses": [
         {
-          "title": "Software Engineer Interview Preparation",
-          "platform": "Udemy",
-          "link": "https://www.udemy.com/course/software-engineer-interview-preparation/",
-          "price": "$12.99",
-          "rating": 4.7,
-          "skill": "Interviewing",
-          "difficulty": "Intermediate"
+          title: "Software Engineer Interview Preparation",
+          platform: "Udemy",
+          link: "https://www.udemy.com/course/software-engineer-interview-preparation/",
+          price: "$12.99",
+          rating: 4.7,
+          skill: "Interviewing",
+          difficulty: "Intermediate"
         },
         {
-          "title": "System Design Interview",
-          "platform": "Educative",
-          "link": "https://www.educative.io/courses/grokking-the-system-design-interview",
-          "price": "$59",
-          "rating": 4.8,
-          "skill": "System Design",
-          "difficulty": "Advanced"
+          title: "System Design Interview",
+          platform: "Educative",
+          link: "https://www.educative.io/courses/grokking-the-system-design-interview",
+          price: "$59",
+          rating: 4.8,
+          skill: "System Design",
+          difficulty: "Advanced"
         },
         {
-          "title": "Cracking the Coding Interview",
-          "platform": "Amazon",
-          "link": "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850",
-          "price": "$26.49",
-          "rating": 4.6,
-          "skill": "Coding",
-          "difficulty": "Intermediate"
+          title: "Cracking the Coding Interview",
+          platform: "Amazon",
+          link: "https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850",
+          price: "$26.49",
+          rating: 4.6,
+          skill: "Coding",
+          difficulty: "Intermediate"
         }
       ], "additional_resources": [
         {
-          "title": "LeetCode",
-          "type": "Practice Platform",
-          "link": "https://leetcode.com",
-          "description": "Practice coding problems and prepare for technical interviews",
-          "format": "Interactive"
+          title: "LeetCode",
+          type: "Practice Platform",
+          link: "https://leetcode.com",
+          description: "Practice coding problems and prepare for technical interviews",
+          format: "Interactive"
         },
         {
-          "title": "HackerRank",
-          "type": "Practice Platform",
-          "link": "https://www.hackerrank.com",
-          "description": "Practice coding problems and compete in contests",
-          "format": "Interactive"
+          title: "HackerRank",
+          type: "Practice Platform",
+          link: "https://www.hackerrank.com",
+          description: "Practice coding problems and compete in contests",
+          format: "Interactive"
         }
       ]
     },
     "Machine Learning Engineer": {
       "courses": [
         {
-          "title": "Machine Learning Engineer Nanodegree",
-          "platform": "Udacity",
-          "link": "https://www.udacity.com/course/machine-learning-engineer-nanodegree--nd009t",
-          "price": "$399/month",
-          "rating": 4.6,
-          "skill": "Machine Learning",
-          "difficulty": "Intermediate"
+          title: "Machine Learning Engineer Nanodegree",
+          platform: "Udacity",
+          link: "https://www.udacity.com/course/machine-learning-engineer-nanodegree--nd009t",
+          price: "$399/month",
+          rating: 4.6,
+          skill: "Machine Learning",
+          difficulty: "Intermediate"
         },
         {
-          "title": "Deep Learning Specialization",
-          "platform": "Coursera",
-          "link": "https://www.coursera.org/specializations/deep-learning",
-          "price": "$49/month",
-          "rating": 4.8,
-          "skill": "Deep Learning",
-          "difficulty": "Advanced"
+          title: "Deep Learning Specialization",
+          platform: "Coursera",
+          link: "https://www.coursera.org/specializations/deep-learning",
+          price: "$49/month",
+          rating: 4.8,
+          skill: "Deep Learning",
+          difficulty: "Advanced"
         },
         {
-          "title": "Natural Language Processing Specialization",
-          "platform": "Coursera",
-          "link": "https://www.coursera.org/specializations/natural-language-processing",
-          "price": "$49/month",
-          "rating": 4.7,
-          "skill": "NLP",
-          "difficulty": "Advanced"
+          title: "Natural Language Processing Specialization",
+          platform: "Coursera",
+          link: "https://www.coursera.org/specializations/natural-language-processing",
+          price: "$49/month",
+          rating: 4.7,
+          skill: "NLP",
+          difficulty: "Advanced"
         }
       ], "additional_resources": [
         {
-          "title": "fast.ai",
-          "type": "Online Learning Platform",
-          "link": "https://www.fast.ai",
-          "description": "Practical deep learning for coders",
-          "format": "Interactive"
+          title: "fast.ai",
+          type: "Online Learning Platform",
+          link: "https://www.fast.ai",
+          description: "Practical deep learning for coders",
+          format: "Interactive"
         },
         {
-          "title": "Kaggle",
-          "type": "Practice Platform",
-          "link": "https://www.kaggle.com",
-          "description": "Compete in machine learning challenges and build your data science portfolio",
-          "format": "Interactive"
+          title: "Kaggle",
+          type: "Practice Platform",
+          link: "https://www.kaggle.com",
+          description: "Compete in machine learning challenges and build your data science portfolio",
+          format: "Interactive"
         }
       ]
     },
@@ -470,7 +660,79 @@ const Roadmap = ({ recommendations, onBack }) => {
         link: "https://www.linkedin.com/jobs/",
         skills: ["Python", "Machine Learning", "AWS"]
       }
-    ]
+    ],
+    "Senior Data Scientist": [
+      {
+        company: "TechCorp",
+        title: "Senior Data Scientist",
+        location: "San Francisco, CA",
+        salary: "$140,000 - $180,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Python", "Machine Learning", "SQL", "AWS"]
+      },
+      {
+        company: "AI Solutions",
+        title: "Machine Learning Engineer",
+        location: "Remote",
+        salary: "$130,000 - $160,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["TensorFlow", "Python", "Deep Learning"]
+      }
+    ],
+    "Senior Software Engineer": [
+      {
+        company: "TechCorp",
+        title: "Senior Software Engineer",
+        location: "San Francisco, CA",
+        salary: "$140,000 - $180,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Java", "Spring Boot", "SQL"]
+      },
+      {
+        company: "WebTech",
+        title: "Full Stack Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "Node.js", "MongoDB"]
+      }
+    ],
+    "Senior Frontend Developer": [
+      {
+        company: "WebTech",
+        title: "Frontend Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "JavaScript", "HTML/CSS"]
+      },
+      {
+        company: "Digital Solutions",
+        title: "Full Stack Developer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Node.js", "React", "MongoDB"]
+      }
+    ],
+    "Full Stack Software Engineer": [
+      {
+        company: "WebTech",
+        title: "Frontend Developer",
+        location: "Austin, TX",
+        salary: "$100,000 - $130,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["React", "JavaScript", "HTML/CSS"]
+      },
+      {
+        company: "Digital Solutions",
+        title: "Full Stack Developer",
+        location: "Remote",
+        salary: "$120,000 - $150,000",
+        link: "https://www.linkedin.com/jobs/",
+        skills: ["Node.js", "React", "MongoDB"]
+      }
+    ],
   };
 
   useEffect(() => {
@@ -492,16 +754,16 @@ const Roadmap = ({ recommendations, onBack }) => {
     }
   } = recommendations;
 
-  // Get role-specific resources or fallback to default
+
   const displayResources = defaultCourses[job_title] || {
     courses: [],
     additional_resources: []
   };
 
-  // Get job listings based on career
+
   const careerJobs = jobListings[job_title] || [];
 
-  // Helper functions
+
   const getDifficultyColor = (difficulty) => {
     switch(difficulty?.toLowerCase()) {
       case 'beginner':

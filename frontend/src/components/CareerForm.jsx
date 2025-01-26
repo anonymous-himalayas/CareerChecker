@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import './CareerForm.css';
+import { useNavigate } from 'react-router-dom';
 
 const CareerForm = ({ onRecommendations }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +14,14 @@ const CareerForm = ({ onRecommendations }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  // Tooltip content
+  const tooltips = {
+    skills: "List your technical skills",
+    location: "Enter your preferred work location",
+    resume: "Upload your resume in PDF format"
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -38,85 +49,37 @@ const CareerForm = ({ onRecommendations }) => {
     setSuccess(false);
 
     try {
-      // Create user first
-      const userResponse = await fetch('https://341e-169-234-117-150.ngrok-free.app/users/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
-        body: JSON.stringify({ email: formData.email })
-      });
-
-      if (!userResponse.ok) {
-        const errorText = await userResponse.text();
-        console.error('User Response Error:', errorText);
-        throw new Error('Failed to create user');
-      }
-
-      const userData = await userResponse.json();
-      const userId = userData.id;
-
-      // Convert skills string to array and remove whitespace
-      const skillsArray = formData.skills.split(',').map(skill => skill.trim());
-      
-      // Create profile object
-      const profileData = {
-        skills: skillsArray,
-        location: formData.location
-      };
-
-      // Create FormData for profile update
+      // Create FormData for the request
       const formDataToSend = new FormData();
-      formDataToSend.append('profile', JSON.stringify(profileData));
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('skills', formData.skills);
+      formDataToSend.append('location', formData.location);
       if (resume) {
         formDataToSend.append('resume', resume);
       }
 
-      // Update profile
-      const profileResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/profile/${userId}`, {
+      // Make the API request
+      const response = await fetch('https://341e-169-234-117-150.ngrok-free.app/recommendations/', {
         method: 'POST',
         headers: {
           'ngrok-skip-browser-warning': 'true'
         },
-        body: formDataToSend,
+        body: formDataToSend
       });
 
-      if (!profileResponse.ok) {
-        const errorText = await profileResponse.text();
-        console.error('Profile Response Error:', errorText);
-        throw new Error('Failed to update profile');
-      }
-
-      // Get recommendations
-      const recommendationsResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/recommendations/${userId}`, {
-        headers: {
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      
-      if (!recommendationsResponse.ok) {
-        const errorText = await recommendationsResponse.text();
-        console.error('Recommendations Response Error:', errorText);
+      if (!response.ok) {
         throw new Error('Failed to get recommendations');
       }
 
-      let recommendations;
-      try {
-        recommendations = await recommendationsResponse.json();
-      } catch (jsonError) {
-        console.error('JSON Parse Error:', jsonError);
-        const responseText = await recommendationsResponse.text();
-        console.error('Raw Response:', responseText);
-        throw new Error('Invalid response format from server');
-      }
-
+      const recommendations = await response.json();
       console.log('Received recommendations:', recommendations);
+      
       setSuccess(true);
       onRecommendations(recommendations);
+      navigate('/roadmap', { state: { recommendations } });
 
     } catch (err) {
-      console.error('Full error:', err);
+      console.error('Error:', err);
       setError(err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -128,7 +91,9 @@ const CareerForm = ({ onRecommendations }) => {
       <h1>Career Path Advisor</h1>
       <form onSubmit={handleSubmit} className="career-form">
         <div className="form-group">
-          <label htmlFor="email">Email Address</label>
+          <label htmlFor="email">
+            Email Address <span className="required">*</span>
+          </label>
           <input
             type="email"
             id="email"
@@ -141,7 +106,13 @@ const CareerForm = ({ onRecommendations }) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="skills">Skills (comma-separated)</label>
+          <label htmlFor="skills">
+            Skills <span className="required">*</span>
+            <div className="tooltip-container">
+              <FontAwesomeIcon icon={faCircleInfo} className="info-icon" />
+              <span className="tooltip-text">{tooltips.skills}</span>
+            </div>
+          </label>
           <textarea
             id="skills"
             name="skills"
@@ -153,7 +124,13 @@ const CareerForm = ({ onRecommendations }) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="location">Location</label>
+          <label htmlFor="location">
+            Location <span className="required">*</span>
+            <div className="tooltip-container">
+              <FontAwesomeIcon icon={faCircleInfo} className="info-icon" />
+              <span className="tooltip-text">{tooltips.location}</span>
+            </div>
+          </label>
           <input
             type="text"
             id="location"
@@ -166,14 +143,19 @@ const CareerForm = ({ onRecommendations }) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="resume">Resume (Optional)</label>
+          <label htmlFor="resume">
+            Resume
+            <div className="tooltip-container">
+              <FontAwesomeIcon icon={faCircleInfo} className="info-icon" />
+              <span className="tooltip-text">{tooltips.resume}</span>
+            </div>
+          </label>
           <input
             type="file"
             id="resume"
             accept=".pdf"
             onChange={handleFileChange}
           />
-          <small>Upload PDF file only</small>
         </div>
 
         {error && <div className="error-message">{error}</div>}

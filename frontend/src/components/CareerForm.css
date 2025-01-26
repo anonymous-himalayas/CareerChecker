@@ -44,27 +44,28 @@ body {
 }
 
 .form-group label {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #1e293b;
 }
 
 .form-group input,
 .form-group textarea {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease;
   background-color: #f8fafc;
   color: var(--text-primary);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .form-group textarea {
@@ -116,4 +117,84 @@ button:disabled {
   border-radius: 8px;
   background-color: #dcfce7;
   border: 1px solid #bbf7d0;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.tooltip-container {
+  display: inline-block;
+  position: relative;
+  margin-left: 8px;
+}
+
+.info-icon {
+  color: #6366f1;
+  cursor: help;
+  font-size: 0.9rem;
+  width: 16px;
+  height: 16px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 100%;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #1e293b;
+  color: white;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  width: max-content;
+  max-width: 300px;
+}
+
+.tooltip-text::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-container:hover .info-icon {
+  color: #4f46e5;
+  transform: scale(1.1);
+}
+
+.info-icon:focus + .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.info-icon:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .tooltip-text {
+    font-size: 0.75rem;
+    max-width: 250px;
+  }
 } 
