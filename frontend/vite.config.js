@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
+  base: '/CareerChecker/',
   plugins: [react()],
-  base: '/CareerChecker/',  // Add this line - should match your repository name
 })
