@@ -1,7 +1,5 @@
 # Career Compass
-- Let Career Compass guide your skills and unlock your path to success!
-
-- Update: the deployment just crashed and I have no clue how to fix it 😭 but I had it running
+Let Career Compass guide your skills and unlock your path to success!
 
 # Submission for IrvineHacks 2025
 
