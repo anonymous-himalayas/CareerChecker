@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import CareerForm from './components/CareerForm';
 import Roadmap from './components/Roadmap';
@@ -14,7 +14,7 @@ function App() {
   };
 
   return (
-    <Router basename="/CareerChecker">
+    <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route 
