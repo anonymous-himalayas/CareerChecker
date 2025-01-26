@@ -7,9 +7,10 @@ const LandingPage = () => {
     <div className="landing-container">
       <div className="hero-section">
         <div className="content">
-          <h1>Discover Your Perfect Tech Career Path</h1>
-          <p className="subtitle">
-            Using AI-powered insights to match your skills with the right tech career
+          <h1 className="main-title">Career Compass</h1>
+          <h2 className="subtitle">Navigate Your Tech Career Path</h2>
+          <p className="description">
+            Discover personalized career recommendations and learning paths tailored to your skills and interests.
           </p>
           <div className="features">
             <div className="feature">
