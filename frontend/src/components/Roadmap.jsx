@@ -484,7 +484,7 @@ const Roadmap = ({ recommendations }) => {
         }
       ]
     },
-    "Low-Level Systems Programmer": {
+    "Low Level Systems Programmer": {
       "courses": [
         {
           title: "Operating Systems: Three Easy Pieces",
