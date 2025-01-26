@@ -339,60 +339,6 @@ const Roadmap = ({ recommendations }) => {
         }
       ]
     },
-    "Data Engineer": {
-      "courses": [
-        {
-          title: "Data Engineering Nanodegree",
-          platform: "Udacity",
-          link: "https://www.udacity.com/course/data-engineer-nanodegree--nd027",
-          price: "$399/month",
-          rating: 4.6,
-          skill: "Data Engineering",
-          difficulty: "Intermediate"
-        },
-        {
-          title: "Big Data Specialization",
-          platform: "Coursera",
-          link: "https://www.coursera.org/specializations/big-data",
-          price: "$49/month",
-          rating: 4.7,
-          skill: "Big Data",
-          difficulty: "Intermediate"
-        },
-        {
-          title: "Apache Spark for Data Engineers",
-          platform: "Udemy",
-          link: "https://www.udemy.com/course/apache-spark-for-data-engineers/",
-          price: "$12.99",
-          rating: 4.5,
-          skill: "Apache Spark",
-          difficulty: "Intermediate"
-        }
-      ],
-      "additional_resources": [
-        {
-          title: "Data Engineering on Google Cloud Platform Specialization",
-          type: "Coursera Specialization",
-          link: "https://www.coursera.org/specializations/gcp-data-machine-learning",
-          description: "Learn to design, build, and operate systems on Google Cloud Platform",
-          format: "Video"
-        },
-        {
-          title: "Data Engineering Cookbook",
-          type: "Book",
-          link: "https://www.oreilly.com/library/view/data-engineering-cookbook/9781491995841/",
-          description: "Recipes for building scalable data pipelines",
-          format: "Text"
-        },
-        {
-          title: "Google Cloud Platform",
-          type: "Online Learning Platform",
-          link: "https://cloud.google.com/training",
-          description: "Learn data engineering on Google Cloud Platform",
-          format: "Interactive"
-        }
-      ]
-    },
     "Data Analyst": {
       "courses": [
         {
