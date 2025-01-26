@@ -1,4 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Query
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -12,7 +14,6 @@ import json
 from read_resume import read_resume_with_groq, extract_skills
 from dotenv import main
 import logging
-
 
 
 main.load_dotenv()
@@ -448,131 +449,141 @@ async def get_recommendations(
                     ]
                 }
 
-            # Prepare final response with all necessary data
-            response_data = {
-                "job_title": career_data["job_title"],
-                "confidence_score": career_data["confidence_score"],
-                "required_skills": career_data["required_skills"],
-                "learning_roadmap": career_data["learning_roadmap"],
-                "learning_resources": career_data["learning_resources"],  # Ensure this is included
-                "relevant_jobs": career_data.get("relevant_jobs", [])
-            }
-
-            logger.info("Response data structure:")
-            logger.info(json.dumps(response_data, indent=2))
-
-            # Generate specific course recommendations based on skills and career path
-            learning_prompt = f"""
-            As a career advisor, recommend specific online courses and learning resources for someone pursuing a career as a {career_data['job_title']} 
-            with these skills: {skills}.
-            Focus on their learning roadmap: {json.dumps(career_data['learning_roadmap'])}
-            
-            Return ONLY a JSON object in this EXACT format:
-            {{
-                "courses": [
-                    {{
-                        "title": "Exact course title from a real platform",
-                        "platform": "Platform name (Udemy/Coursera/etc)",
-                        "link": "Actual course URL",
-                        "price": "Current price in USD",
-                        "rating": "Course rating (1-5)",
-                        "skill": "Primary skill taught",
-                        "difficulty": "Beginner/Intermediate/Advanced"
-                    }}
-                ],
-                "additional_resources": [
-                    {{
-                        "title": "Resource name",
-                        "type": "Documentation/Tutorial/Practice/Community",
-                        "link": "Resource URL",
-                        "description": "Brief description focusing on career relevance",
-                        "format": "Video/Text/Interactive"
-                    }}
-                ]
-            }}
-            
-            Focus on:
-            1. Real, currently available courses
-            2. Mix of free and paid resources
-            3. Resources matching their skill level
-            4. Courses aligned with immediate and short-term skills
-            5. Popular and highly-rated content
-            """
-
-            learning_response = groq_client.chat.completions.create(
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert technical education advisor with deep knowledge of programming courses and learning resources. Provide specific, real course recommendations from major platforms."
-                    },
-                    {
-                        "role": "user",
-                        "content": learning_prompt
-                    }
-                ],
-                model="mixtral-8x7b-32768",
-                temperature=0.7,
-                max_tokens=1500
-            )
-
-            try:
-                learning_text = learning_response.choices[0].message.content.strip()
-                learning_resources = json.loads(learning_text)
-                
-                # Validate and clean the response
-                if not isinstance(learning_resources.get('courses'), list):
-                    raise ValueError("Invalid courses format")
-                if not isinstance(learning_resources.get('additional_resources'), list):
-                    raise ValueError("Invalid additional resources format")
-
-                # Ensure we have at least some recommendations
-                if len(learning_resources['courses']) == 0:
-                    raise ValueError("No courses provided")
-
-            except Exception as e:
-                logger.error(f"Error parsing learning resources: {e}")
-                # Provide fallback recommendations based on career path
-                learning_resources = {
+            # Career-specific resources mapping
+            career_resources_map = {
+                "Web Developer": {
                     "courses": [
                         {
-                            "title": f"Complete {career_data['job_title']} Bootcamp 2024",
+                            "title": "The Complete Web Development Bootcamp 2024",
                             "platform": "Udemy",
-                            "link": "https://www.udemy.com",
+                            "link": "https://www.udemy.com/course/the-complete-web-development-bootcamp/",
                             "price": "$13.99",
                             "rating": 4.8,
-                            "skill": career_data['required_skills'][0] if career_data['required_skills'] else "Programming",
+                            "skill": "Web Development",
                             "difficulty": "Beginner"
                         },
                         {
-                            "title": f"Advanced {career_data['job_title']} Specialization",
-                            "platform": "Coursera",
-                            "link": "https://www.coursera.org",
-                            "price": "$49.99",
+                            "title": "React - The Complete Guide",
+                            "platform": "Udemy",
+                            "link": "https://www.udemy.com/course/react-the-complete-guide/",
+                            "price": "$12.99",
                             "rating": 4.7,
-                            "skill": career_data['required_skills'][1] if len(career_data['required_skills']) > 1 else "Development",
+                            "skill": "React",
                             "difficulty": "Intermediate"
                         }
                     ],
                     "additional_resources": [
                         {
-                            "title": "freeCodeCamp",
-                            "type": "Interactive Learning",
-                            "link": "https://www.freecodecamp.org",
-                            "description": f"Free certification program covering essential {career_data['job_title']} skills",
-                            "format": "Interactive"
-                        },
-                        {
                             "title": "MDN Web Docs",
                             "type": "Documentation",
                             "link": "https://developer.mozilla.org",
-                            "description": "Comprehensive web development documentation and tutorials",
+                            "description": "Comprehensive web development documentation",
+                            "format": "Text"
+                        },
+                        {
+                            "title": "Frontend Masters",
+                            "type": "Video Courses",
+                            "link": "https://frontendmasters.com",
+                            "description": "Advanced frontend development courses",
+                            "format": "Video"
+                        }
+                    ]
+                },
+                "Backend Developer": {
+                    "courses": [
+                        {
+                            "title": "Complete Python Programming Masterclass",
+                            "platform": "Udemy",
+                            "link": "https://www.udemy.com/course/complete-python-bootcamp/",
+                            "price": "$14.99",
+                            "rating": 4.8,
+                            "skill": "Python",
+                            "difficulty": "Beginner"
+                        },
+                        {
+                            "title": "Node.js, Express, MongoDB & More",
+                            "platform": "Udemy",
+                            "link": "https://www.udemy.com/course/nodejs-express-mongodb-bootcamp/",
+                            "price": "$15.99",
+                            "rating": 4.7,
+                            "skill": "Node.js",
+                            "difficulty": "Intermediate"
+                        }
+                    ],
+                    "additional_resources": [
+                        {
+                            "title": "Python Documentation",
+                            "type": "Documentation",
+                            "link": "https://docs.python.org/3/",
+                            "description": "Official Python programming documentation",
+                            "format": "Text"
+                        },
+                        {
+                            "title": "Node.js Documentation",
+                            "type": "Documentation",
+                            "link": "https://nodejs.org/docs/latest/",
+                            "description": "Official Node.js documentation",
                             "format": "Text"
                         }
                     ]
                 }
+            }
 
-            # Update career_data with learning resources
-            career_data['learning_resources'] = learning_resources
+            # Default resources if career is not found in mapping
+            default_resources = {
+                "courses": [
+                    {
+                        "title": "Git Complete: The definitive guide",
+                        "platform": "Udemy",
+                        "link": "https://www.udemy.com/course/git-complete/",
+                        "price": "$12.99",
+                        "rating": 4.7,
+                        "skill": "Git",
+                        "difficulty": "Beginner"
+                    },
+                    {
+                        "title": "Data Structures and Algorithms",
+                        "platform": "Coursera",
+                        "link": "https://www.coursera.org/learn/algorithms-part1",
+                        "price": "$49.99",
+                        "rating": 4.8,
+                        "skill": "DSA",
+                        "difficulty": "Intermediate"
+                    }
+                ],
+                "additional_resources": [
+                    {
+                        "title": "GitHub Learning Lab",
+                        "type": "Interactive Tutorial",
+                        "link": "https://lab.github.com",
+                        "description": "Learn essential GitHub workflows",
+                        "format": "Interactive"
+                    },
+                    {
+                        "title": "LeetCode",
+                        "type": "Practice Platform",
+                        "link": "https://leetcode.com",
+                        "description": "Practice coding problems",
+                        "format": "Interactive"
+                    }
+                ]
+            }
+
+            # Get career-specific resources based on job title
+            career_specific_resources = career_resources_map.get(career_data['job_title'])
+            
+            if career_specific_resources:
+                # Combine career-specific resources with default resources
+                combined_resources = {
+                    "courses": career_specific_resources["courses"] + default_resources["courses"],
+                    "additional_resources": career_specific_resources["additional_resources"] + default_resources["additional_resources"]
+                }
+            else:
+                # Use default resources if career not found in mapping
+                combined_resources = default_resources
+
+            # Update career_data with the combined resources
+            career_data['learning_resources'] = combined_resources
 
             # Prepare final response
             response_data = {
@@ -626,6 +637,8 @@ async def get_job_openings(title: str = Query(...)):
         logger.error(f"Error fetching job openings: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch job openings")
 
+# templates = Jinja2Templates(directory="frontend/dist")
+# app.mount('/dist', StaticFiles(directory="../frontend/dist"), 'dist')
 # unicorn
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

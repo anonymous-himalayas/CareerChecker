@@ -39,7 +39,7 @@ const CareerForm = ({ onRecommendations }) => {
 
     try {
       // Create user first
-      const userResponse = await fetch('http://localhost:8000/users/', {
+      const userResponse = await fetch('https://341e-169-234-117-150.ngrok-free.app/users/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const CareerForm = ({ onRecommendations }) => {
       }
 
       // Update profile
-      const profileResponse = await fetch(`http://localhost:8000/profile/${userId}`, {
+      const profileResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/profile/${userId}`, {
         method: 'POST',
         body: formDataToSend,
       });
@@ -82,7 +82,7 @@ const CareerForm = ({ onRecommendations }) => {
       }
 
       // Get recommendations
-      const recommendationsResponse = await fetch(`http://localhost:8000/recommendations/${userId}`);
+      const recommendationsResponse = await fetch(`https://341e-169-234-117-150.ngrok-free.app/recommendations/${userId}`);
       
       if (!recommendationsResponse.ok) {
         throw new Error('Failed to get recommendations');
