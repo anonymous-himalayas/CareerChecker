@@ -15,4 +15,4 @@ Career Compass is a personalized career guidance platform that leverages machine
 </p>
 
 # Biggest Accomplishement
-## **Soloing it**
+ - <h2> Soloing the project</h2>
