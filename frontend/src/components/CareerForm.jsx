@@ -59,11 +59,11 @@ const CareerForm = ({ onRecommendations }) => {
       }
 
       // Make the API request
-      const response = await fetch('https://341e-169-234-117-150.ngrok-free.app/recommendations/', {
+      const response = await fetch('http://127.0.0.1:8000/recommendations/', {
         method: 'POST',
-        headers: {
-          'ngrok-skip-browser-warning': 'true'
-        },
+        // headers: {
+        //   'ngrok-skip-browser-warning': 'true'
+        // },
         body: formDataToSend
       });
 
